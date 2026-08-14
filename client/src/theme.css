@@ -1,0 +1,611 @@
+/* =========================
+   GOOGLE FONT
+========================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+
+/* =========================
+   RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+
+/* =========================
+   HTML / BODY
+========================= */
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: #f5f7fb;
+  color: #222;
+  transition: all 0.3s ease;
+}
+
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.navbar .btn {
+  border-radius: 30px;
+  padding: 10px 22px;
+  transition: 0.3s;
+}
+
+.navbar .btn:hover {
+  transform: translateY(-2px);
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  width: 100%;
+  height: 420px;
+
+  border-radius: 25px;
+  overflow: hidden;
+
+  margin-bottom: 40px;
+
+  background-size: cover;
+  background-position: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  color: white;
+
+  position: relative;
+}
+
+.hero::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+
+  animation: fadeDown 0.8s ease;
+}
+
+.hero p {
+  font-size: 1.2rem;
+
+  animation: fadeUp 1s ease;
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-box {
+  width: 100%;
+
+  border-radius: 40px;
+
+  border: none;
+
+  padding: 15px;
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.form-control {
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.form-control:focus {
+  border-color: #ffc107;
+
+  box-shadow:
+    0 0 10px rgba(255, 193, 7, 0.3);
+}
+
+
+/* =========================
+   BOOKS GRID
+========================= */
+
+.books-grid {
+  width: 100%;
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  padding: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 24px;
+
+  overflow: hidden;
+}
+
+
+/* =========================
+   BOOK ITEM
+========================= */
+
+.book-item {
+  width: 100%;
+  min-width: 0;
+}
+
+
+/* =========================
+   BOOK CARD
+========================= */
+
+.book-card {
+  width: 100%;
+  height: 100%;
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  border: none;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.1);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.book-card:hover {
+  transform: translateY(-6px);
+
+  box-shadow:
+    0 15px 35px rgba(15, 23, 42, 0.18);
+}
+
+
+/* =========================
+   BOOK IMAGE
+========================= */
+
+.book-image {
+  width: 100%;
+
+  height: 230px;
+
+  object-fit: cover;
+
+  display: block;
+
+  transition:
+    transform 0.4s ease;
+}
+
+.book-card:hover .book-image {
+  transform: scale(1.03);
+}
+
+
+/* =========================
+   BOOK CONTENT
+========================= */
+
+.book-card .card-body {
+  padding: 18px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+/* =========================
+   BOOK TITLE
+========================= */
+
+.book-card .card-title {
+  color: #1677ff;
+
+  font-size: 19px;
+
+  font-weight: 700;
+
+  line-height: 1.3;
+
+  margin-bottom: 10px;
+
+  word-break: normal;
+}
+
+
+/* =========================
+   BOOK TEXT
+========================= */
+
+.book-card .card-text {
+  color: #555;
+
+  line-height: 1.5;
+
+  margin-bottom: 8px;
+}
+
+
+/* =========================
+   DESCRIPTION
+========================= */
+
+.book-description {
+  min-height: 40px;
+
+  overflow: hidden;
+}
+
+
+/* =========================
+   BOOK BUTTONS
+========================= */
+
+.book-actions {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 8px;
+
+  margin-top: auto;
+
+  padding-top: 15px;
+
+  min-width: 0;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.book-actions .btn {
+  width: 100%;
+
+  min-width: 0;
+
+  height: 40px;
+
+  padding: 6px 8px;
+
+  border-radius: 12px;
+
+  border: none;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 5px;
+
+  font-weight: 600;
+
+  font-size: 13px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.book-actions .btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================
+   GENERAL BUTTONS
+========================= */
+
+button {
+  transition: 0.3s;
+}
+
+
+/* =========================
+   FORM CARD
+========================= */
+
+.card {
+  border-radius: 20px;
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.stats-card {
+  border: none;
+
+  border-radius: 20px;
+
+  transition: 0.3s;
+}
+
+.stats-card:hover {
+  transform: translateY(-8px);
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+  margin-top: 60px;
+
+  padding: 25px;
+
+  background: #0f172a;
+
+  color: white;
+
+  text-align: center;
+
+  border-radius:
+    20px 20px 0 0;
+}
+
+footer hr {
+  border-color:
+    rgba(255, 255, 255, 0.2);
+}
+
+footer h3 {
+  color: #ffc107;
+}
+
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-25px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+body.dark {
+  background: #121212;
+
+  color: white;
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5 {
+  color: white;
+}
+
+
+/* =========================
+   DARK CARDS
+========================= */
+
+body.dark .card,
+body.dark .book-card {
+  background-color:
+    #1e1e1e !important;
+
+  color: white !important;
+}
+
+body.dark .card-title,
+body.dark .card-text,
+body.dark .book-card .card-text {
+  color: white !important;
+}
+
+body.dark .card small {
+  color: #bbb !important;
+}
+
+
+/* =========================
+   DARK INPUTS
+========================= */
+
+body.dark input,
+body.dark textarea {
+  background-color: #333;
+
+  color: white;
+
+  border:
+    1px solid #555;
+}
+
+body.dark input::placeholder {
+  color: #aaa;
+}
+
+
+/* =========================
+   DARK BOOK TITLE
+========================= */
+
+body.dark .book-card .card-title {
+  color: #60a5fa !important;
+}
+
+
+/* =========================
+   DARK BUTTONS
+========================= */
+
+body.dark .book-actions .btn {
+  color: white;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 992px) {
+
+  .books-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 576px) {
+
+  .hero {
+    height: 350px;
+
+    border-radius: 18px;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .books-grid {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+
+  .book-image {
+    height: 240px;
+  }
+
+  .book-card .card-body {
+    padding: 16px;
+  }
+
+  .book-card .card-title {
+    font-size: 18px;
+  }
+
+  .book-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .book-actions .btn {
+    width: 100%;
+  }
+
+}
