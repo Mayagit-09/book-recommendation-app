@@ -1,22 +1,61 @@
 import { useState } from "react";
 import api from "../services/api";
 
-function BookSearch({ onBookAdded }) {
+function BookSearch({ onBookAdded, showNotification }) {
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [addingBook, setAddingBook] = useState(null);
+
+  // =========================
+  // RECHERCHER DES LIVRES
+  // =========================
 
   const searchBooks = async () => {
-    if (!query) return;
+    if (!query.trim()) {
+      showNotification(
+        "🔍 Veuillez saisir le nom d'un livre.",
+        "error"
+      );
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const res = await api.get(`/search?query=${query}`);
+      const res = await api.get(
+        `/search?query=${encodeURIComponent(query)}`
+      );
+
       setBooks(res.data);
+
+      if (res.data.length === 0) {
+        showNotification(
+          "📚 Aucun livre trouvé.",
+          "error"
+        );
+      }
+
     } catch (error) {
       console.error("Erreur recherche :", error);
+
+      showNotification(
+        "❌ Erreur lors de la recherche.",
+        "error"
+      );
+
+    } finally {
+      setLoading(false);
     }
   };
 
+  // =========================
+  // AJOUTER UN LIVRE
+  // =========================
+
   const addBook = async (book) => {
+    setAddingBook(book.id);
+
     try {
       const token = localStorage.getItem("token");
 
@@ -25,10 +64,11 @@ function BookSearch({ onBookAdded }) {
         {
           title: book.title,
           author: book.author,
-          description: book.description || "Aucune description disponible.",
+          description:
+            book.description ||
+            "Aucune description disponible.",
           image: book.image,
           genre: book.genre,
-          
         },
         {
           headers: {
@@ -37,26 +77,47 @@ function BookSearch({ onBookAdded }) {
         }
       );
 
-      alert("📚 Livre ajouté avec succès !");
+      showNotification(
+        "📚 Livre ajouté avec succès !",
+        "success"
+      );
 
       if (onBookAdded) {
         onBookAdded();
       }
+
     } catch (error) {
-      console.error("Erreur ajout :", error);
-      alert("Erreur lors de l'ajout du livre");
+      console.error(
+        "Erreur ajout :",
+        error.response?.data || error.message
+      );
+
+      showNotification(
+        error.response?.data?.message ||
+          "❌ Erreur lors de l'ajout du livre.",
+        "error"
+      );
+
+    } finally {
+      setAddingBook(null);
     }
   };
 
   return (
     <div className="my-5">
 
-      {/* TITRE */}
+      {/* =========================
+          TITRE
+      ========================= */}
+
       <h3 className="text-center mb-3">
         🔍 Recherche de livres
       </h3>
 
-      {/* BARRE DE RECHERCHE */}
+      {/* =========================
+          BARRE DE RECHERCHE
+      ========================= */}
+
       <div className="d-flex justify-content-center align-items-center gap-2">
 
         <input
@@ -69,6 +130,11 @@ function BookSearch({ onBookAdded }) {
           }}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              searchBooks();
+            }
+          }}
           placeholder="Ex : Harry Potter"
         />
 
@@ -82,13 +148,19 @@ function BookSearch({ onBookAdded }) {
             whiteSpace: "nowrap",
           }}
           onClick={searchBooks}
+          disabled={loading}
         >
-          🔍 Rechercher
+          {loading
+            ? "Recherche..."
+            : "🔍 Rechercher"}
         </button>
 
       </div>
 
-      {/* RÉSULTATS */}
+      {/* =========================
+          RÉSULTATS
+      ========================= */}
+
       <div className="mt-4">
 
         {books.map((book) => (
@@ -105,7 +177,8 @@ function BookSearch({ onBookAdded }) {
             <h3>{book.title}</h3>
 
             <p>
-              <strong>Auteur :</strong> {book.author}
+              <strong>Auteur :</strong>{" "}
+              {book.author}
             </p>
 
             {book.image && (
@@ -122,10 +195,14 @@ function BookSearch({ onBookAdded }) {
 
             <br />
 
-            {/* BOUTON AJOUTER */}
+            {/* =========================
+                BOUTON AJOUTER
+            ========================= */}
+
             <button
               onClick={() => addBook(book)}
               className="btn btn-success"
+              disabled={addingBook === book.id}
               style={{
                 borderRadius: "12px",
                 padding: "10px 18px",
@@ -137,7 +214,9 @@ function BookSearch({ onBookAdded }) {
                 transition: "all 0.2s ease",
               }}
             >
-              📚 Ajouter à ma bibliothèque
+              {addingBook === book.id
+                ? "Ajout en cours..."
+                : "📚 Ajouter à ma bibliothèque"}
             </button>
 
           </div>

@@ -2,239 +2,154 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 // =====================
 // REGISTER
 // =====================
 
 exports.register = async (req, res) => {
-
   try {
-
     const {
       username,
       email,
-      password
+      password,
     } = req.body;
 
+    // Vérifier les champs
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        message: "Tous les champs sont obligatoires",
+      });
+    }
 
-
+    // Nettoyer l'email
     const cleanEmail = email
       .trim()
       .toLowerCase();
 
-
-
+    // Vérifier si l'utilisateur existe déjà
     const existingUser = await User.findOne({
-      email: cleanEmail
+      email: cleanEmail,
     });
 
-
-
     if (existingUser) {
-
       return res.status(400).json({
-
-        message: "Email already exists"
-
+        message: "Cet email existe déjà",
       });
-
     }
 
-
-
+    // Hash du mot de passe
     const hashedPassword = await bcrypt.hash(
       password,
       10
     );
 
-
-
+    // Créer l'utilisateur
     const user = await User.create({
-
-      username,
-
+      username: username.trim(),
       email: cleanEmail,
-
-      password: hashedPassword
-
+      password: hashedPassword,
     });
 
-
-
+    // Réponse
     res.status(201).json({
-
-      message: "User created successfully",
-
+      message: "Compte créé avec succès",
       user: {
-
         id: user._id,
-
         username: user.username,
-
-        email: user.email
-
-      }
-
+        email: user.email,
+      },
     });
-
-
 
   } catch (error) {
-
+    console.error(
+      "Erreur inscription :",
+      error
+    );
 
     res.status(500).json({
-
-      message: error.message
-
+      message: "Une erreur interne est survenue.",
     });
-
-
   }
-
 };
-
-
-
-
 
 // =====================
 // LOGIN
 // =====================
 
 exports.login = async (req, res) => {
-
-
   try {
-
-
     const {
       email,
-      password
+      password,
     } = req.body;
 
+    // Vérifier les champs
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email et mot de passe obligatoires",
+      });
+    }
 
-
+    // Nettoyer l'email
     const cleanEmail = email
       .trim()
       .toLowerCase();
 
-
-
-    console.log(
-      "EMAIL RECHERCHE :",
-      cleanEmail
-    );
-
-
-
+    // Chercher l'utilisateur
     const user = await User.findOne({
-
-      email: cleanEmail
-
+      email: cleanEmail,
     });
 
-
-
-    console.log(
-      "USER TROUVE :",
-      user
-    );
-
-
-
     if (!user) {
-
-
-      return res.status(404).json({
-
-        message: "User not found"
-
+      return res.status(401).json({
+        message: "Email ou mot de passe incorrect",
       });
-
-
     }
 
-
-
-
+    // Vérifier le mot de passe
     const isMatch = await bcrypt.compare(
-
       password,
-
       user.password
-
     );
-
-
-
 
     if (!isMatch) {
-
-
-      return res.status(400).json({
-
-        message: "Invalid password"
-
+      return res.status(401).json({
+        message: "Email ou mot de passe incorrect",
       });
-
-
     }
 
-
-
-
+    // Créer le JWT
     const token = jwt.sign(
-
       {
-        id: user._id
+        id: user._id,
       },
-
       process.env.JWT_SECRET,
-
       {
-        expiresIn:"7d"
+        expiresIn: "7d",
       }
-
     );
 
-
-
-
-
+    // Réponse
     res.json({
-
-      message:"Login successful",
+      message: "Connexion réussie",
 
       token,
 
-      user:{
-
-        id:user._id,
-
-        username:user.username,
-
-        email:user.email
-
-      }
-
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
     });
 
-
-
-
-
-  } catch(error) {
-
+  } catch (error) {
+    console.error(
+      "Erreur connexion :",
+      error
+    );
 
     res.status(500).json({
-
-      message:error.message
-
+      message: "Une erreur interne est survenue.",
     });
-
-
   }
-
-
 };

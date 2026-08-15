@@ -1,7 +1,8 @@
 const Book = require("../models/Book");
 
-
-// Add book recommendation
+// =============================
+// AJOUTER UN LIVRE
+// =============================
 exports.createBook = async (req, res) => {
   try {
     const {
@@ -27,6 +28,8 @@ exports.createBook = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Erreur ajout livre :", error);
+
     res.status(500).json({
       message: error.message
     });
@@ -34,34 +37,45 @@ exports.createBook = async (req, res) => {
 };
 
 
-// Get all books
+// =============================
+// RÉCUPÉRER MES LIVRES
+// =============================
 exports.getBooks = async (req, res) => {
   try {
 
-    const books = await Book.find()
+    const books = await Book.find({
+      recommendedBy: req.user.id
+    })
       .populate("recommendedBy", "username email");
 
     res.json(books);
 
   } catch (error) {
 
+    console.error("Erreur récupération livres :", error);
+
     res.status(500).json({
       message: error.message
     });
-
   }
 };
 
-// Get single book
+
+// =============================
+// RÉCUPÉRER UN LIVRE
+// =============================
 exports.getBookById = async (req, res) => {
   try {
 
-    const book = await Book.findById(req.params.id)
+    const book = await Book.findOne({
+      _id: req.params.id,
+      recommendedBy: req.user.id
+    })
       .populate("recommendedBy", "username email");
 
     if (!book) {
       return res.status(404).json({
-        message: "Book not found"
+        message: "Livre introuvable"
       });
     }
 
@@ -69,28 +83,36 @@ exports.getBookById = async (req, res) => {
 
   } catch (error) {
 
+    console.error("Erreur récupération livre :", error);
+
     res.status(500).json({
       message: error.message
     });
-
   }
 };
 
-// Update book
+
+// =============================
+// MODIFIER UN LIVRE
+// =============================
 exports.updateBook = async (req, res) => {
   try {
 
-    const book = await Book.findByIdAndUpdate(
-      req.params.id,
+    const book = await Book.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        recommendedBy: req.user.id
+      },
       req.body,
       {
-        new: true
+        new: true,
+        runValidators: true
       }
     );
 
     if (!book) {
       return res.status(404).json({
-        message: "Book not found"
+        message: "Livre introuvable ou non autorisé"
       });
     }
 
@@ -101,22 +123,29 @@ exports.updateBook = async (req, res) => {
 
   } catch (error) {
 
+    console.error("Erreur modification livre :", error);
+
     res.status(500).json({
       message: error.message
     });
-
   }
 };
 
-// Delete book
+
+// =============================
+// SUPPRIMER UN LIVRE
+// =============================
 exports.deleteBook = async (req, res) => {
   try {
 
-    const book = await Book.findByIdAndDelete(req.params.id);
+    const book = await Book.findOneAndDelete({
+      _id: req.params.id,
+      recommendedBy: req.user.id
+    });
 
     if (!book) {
       return res.status(404).json({
-        message: "Book not found"
+        message: "Livre introuvable ou non autorisé"
       });
     }
 
@@ -126,46 +155,55 @@ exports.deleteBook = async (req, res) => {
 
   } catch (error) {
 
+    console.error("Erreur suppression livre :", error);
+
     res.status(500).json({
       message: error.message
     });
-
   }
 };
 
-// Rate a book
+
+// =============================
+// NOTER UN LIVRE
+// =============================
 exports.rateBook = async (req, res) => {
   try {
 
     const { rating } = req.body;
 
-
-    const book = await Book.findById(req.params.id);
-
-
-    if (!book) {
-      return res.status(404).json({
-        message: "Book not found"
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({
+        message: "La note doit être comprise entre 1 et 5"
       });
     }
 
+    const book = await Book.findOne({
+      _id: req.params.id,
+      recommendedBy: req.user.id
+    });
+
+    if (!book) {
+      return res.status(404).json({
+        message: "Livre introuvable ou non autorisé"
+      });
+    }
 
     book.rating = rating;
 
     await book.save();
-
 
     res.json({
       message: "⭐ Note ajoutée avec succès !",
       book
     });
 
-
   } catch (error) {
+
+    console.error("Erreur notation :", error);
 
     res.status(500).json({
       message: error.message
     });
-
   }
 };

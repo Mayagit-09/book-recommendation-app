@@ -4,24 +4,29 @@ const bookSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
 
     author: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
 
     description: {
-      type: String
+      type: String,
+      default: ""
     },
 
     image: {
-      type: String
+      type: String,
+      default: ""
     },
 
     genre: {
-      type: String
+      type: String,
+      default: ""
     },
 
     rating: {
@@ -29,9 +34,11 @@ const bookSchema = new mongoose.Schema(
       default: 0
     },
 
+    // Utilisateur propriétaire du livre
     recommendedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
+      required: true
     }
   },
   {

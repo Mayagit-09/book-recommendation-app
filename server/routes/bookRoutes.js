@@ -13,22 +13,23 @@ const {
 } = require("../controllers/bookController");
 
 
-// Create book
+// Ajouter un livre
 router.post("/", authMiddleware, createBook);
 
-// Get all books
-router.get("/", getBooks);
+// Ma bibliothèque
+router.get("/", authMiddleware, getBooks);
 
-// Get one book
-router.get("/:id", getBookById);
+// Détails d'un livre
+router.get("/:id", authMiddleware, getBookById);
 
-// Update book
+// Modifier
 router.put("/:id", authMiddleware, updateBook);
 
-// delete book
+// Supprimer
 router.delete("/:id", authMiddleware, deleteBook);
 
-// Rate book
+// Noter
 router.put("/:id/rating", authMiddleware, rateBook);
+
 
 module.exports = router;

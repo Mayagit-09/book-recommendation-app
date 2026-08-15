@@ -15,20 +15,62 @@ function Home() {
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState("");
   const [editId, setEditId] = useState(null);
+
+  // Notification
+  const [notification, setNotification] = useState({
+    message: "",
+    type: "",
+  });
+
   const navigate = useNavigate();
+
+  // =========================
+  // NOTIFICATION
+  // =========================
+
+  const showNotification = (message, type = "success") => {
+    setNotification({
+      message,
+      type,
+    });
+
+    setTimeout(() => {
+      setNotification({
+        message: "",
+        type: "",
+      });
+    }, 3000);
+  };
 
   // =========================
   // RÉCUPÉRER LES LIVRES
   // =========================
 
   const fetchBooks = async () => {
-    try {
-      const res = await api.get("/books");
-      setBooks(res.data);
-    } catch (error) {
-      console.error("Erreur récupération livres :", error);
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await api.get("/books", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setBooks(res.data);
+
+  } catch (error) {
+    console.error("Erreur récupération livres :", error);
+    console.error("Status :", error.response?.status);
+    console.error("Message :", error.response?.data);
+
+    // Si le token est invalide ou absent
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/login");
     }
-  };
+  }
+};
 
   useEffect(() => {
     fetchBooks();
@@ -39,39 +81,41 @@ function Home() {
   // =========================
 
   const deleteBook = async (id) => {
-  if (!window.confirm("Voulez-vous vraiment supprimer ce livre ?")) {
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem("token");
-
-    console.log("ID du livre :", id);
-    console.log("Token :", token);
-
-    const response = await api.delete(`/books/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    console.log("Réponse suppression :", response.data);
-
-    alert("🗑️ Livre supprimé !");
-
-    fetchBooks();
-
-  } catch (error) {
-    console.error("Erreur suppression :", error);
-    console.error("Status :", error.response?.status);
-    console.error("Data :", error.response?.data);
-
-    alert(
-      error.response?.data?.message ||
-      "Erreur lors de la suppression"
+    const confirmed = window.confirm(
+      "Voulez-vous vraiment supprimer ce livre ?"
     );
-  }
-};
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      await api.delete(`/books/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      showNotification(
+        "🗑️ Livre supprimé avec succès !",
+        "success"
+      );
+
+      fetchBooks();
+
+    } catch (error) {
+      console.error("Erreur suppression :", error);
+
+      showNotification(
+        error.response?.data?.message ||
+          "Erreur lors de la suppression.",
+        "error"
+      );
+    }
+  };
+
   // =========================
   // AJOUTER AUX FAVORIS
   // =========================
@@ -90,10 +134,19 @@ function Home() {
         }
       );
 
-      alert("❤️ Livre ajouté aux favoris !");
+      showNotification(
+        "❤️ Livre ajouté aux favoris !",
+        "success"
+      );
+
     } catch (error) {
       console.error("Erreur favoris :", error);
-      alert("Erreur favoris");
+
+      showNotification(
+        error.response?.data?.message ||
+          "Erreur lors de l'ajout aux favoris.",
+        "error"
+      );
     }
   };
 
@@ -124,6 +177,30 @@ function Home() {
   return (
     <>
       {/* =========================
+          NOTIFICATION
+      ========================= */}
+
+      {notification.message && (
+        <div
+          className={`notification ${notification.type}`}
+        >
+          <span>{notification.message}</span>
+
+          <button
+            type="button"
+            onClick={() =>
+              setNotification({
+                message: "",
+                type: "",
+              })
+            }
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* =========================
           HERO
       ========================= */}
 
@@ -134,24 +211,28 @@ function Home() {
         }}
       >
         <div className="hero-content">
-          <h1>📚 Découvrez votre prochaine lecture</h1>
+          <h1>
+            📚 Découvrez votre prochaine lecture
+          </h1>
 
           <p className="mt-3">
-           Des milliers de livres vous attendent.
+            Des milliers de livres vous attendent.
             <br />
             Explorez, découvrez et partagez vos coups de cœur.
           </p>
 
           <button
-  className="btn btn-warning btn-lg mt-3"
-  onClick={() =>
-    document.getElementById("books-section")?.scrollIntoView({
-      behavior: "smooth",
-    })
-  }
->
-  📖 Commencer l’exploration
-</button>
+            className="btn btn-warning btn-lg mt-3"
+            onClick={() =>
+              document
+                .getElementById("books-section")
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                })
+            }
+          >
+            📖 Commencer l’exploration
+          </button>
         </div>
       </div>
 
@@ -198,11 +279,12 @@ function Home() {
       {/* =========================
           TITRE BIBLIOTHÈQUE
       ========================= */}
-<div id="books-section">
-  <h2 className="mb-4">
-    📖 Ma bibliothèque
-  </h2>
-</div>
+
+      <div id="books-section">
+        <h2 className="mb-4">
+          📖 Ma bibliothèque
+        </h2>
+      </div>
 
       {/* =========================
           LIVRES
@@ -232,18 +314,19 @@ function Home() {
                 {/* IMAGE */}
 
                 <img
-  src={
-    book.image ||
-    "https://via.placeholder.com/300x450?text=No+Image"
-  }
-  alt={book.title}
-  className="book-image"
-  style={{
-    width: "100%",
-    height: "600px",
-    objectFit: "cover"
-  }}
-/>
+                  src={
+                    book.image ||
+                    "https://via.placeholder.com/300x450?text=No+Image"
+                  }
+                  alt={book.title}
+                  className="book-image"
+                  style={{
+                    width: "100%",
+                    height: "600px",
+                    objectFit: "cover",
+                  }}
+                />
+
                 {/* CONTENU */}
 
                 <div className="card-body">
@@ -297,15 +380,20 @@ function Home() {
                   ========================= */}
 
                   <div className="book-actions">
-                    
-                    {/* Détail */}
-                     <button
-                       className="btn btn-primary"
-                        onClick={() => navigate(`/books/${book._id}`)}
+
+                    {/* DÉTAIL */}
+
+                    <button
+                      className="btn btn-primary"
+                      onClick={() =>
+                        navigate(
+                          `/books/${book._id}`
+                        )
+                      }
                     >
                       📖
                       <span>Détails</span>
-                     </button>
+                    </button>
 
                     {/* FAVORI */}
 
@@ -350,17 +438,24 @@ function Home() {
                   ========================= */}
 
                   {editId === book._id && (
-                  <div className="mt-4">
-                     <EditBook
-                       book={book}
-                       onBookUpdated={() => {
-                       fetchBooks();
-                       setEditId(null);
-                       }}
-                      onClose={() => setEditId(null)}
+                    <div className="mt-4">
+                      <EditBook
+                        book={book}
+                        onBookUpdated={() => {
+                          fetchBooks();
+                          setEditId(null);
+
+                          showNotification(
+                            "✏️ Livre modifié avec succès !",
+                            "success"
+                          );
+                        }}
+                        onClose={() =>
+                          setEditId(null)
+                        }
                       />
-                  </div>
-)}
+                    </div>
+                  )}
 
                 </div>
               </div>
@@ -374,7 +469,9 @@ function Home() {
       ========================= */}
 
       <footer>
-        <h3>📚 Application de recommandation de livres</h3>
+        <h3>
+          📚 Application de recommandation de livres
+        </h3>
 
         <hr />
 

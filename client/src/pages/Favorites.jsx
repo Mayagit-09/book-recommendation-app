@@ -1,202 +1,176 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 
-
 function Favorites() {
-
-
   const [favorites, setFavorites] = useState([]);
 
+  // Notification
+  const [notification, setNotification] = useState({
+    message: "",
+    type: "",
+  });
 
+  // =========================
+  // AFFICHER UNE NOTIFICATION
+  // =========================
+
+  const showNotification = (message, type = "success") => {
+    setNotification({
+      message,
+      type,
+    });
+
+    setTimeout(() => {
+      setNotification({
+        message: "",
+        type: "",
+      });
+    }, 3000);
+  };
+
+  // =========================
+  // RÉCUPÉRER LES FAVORIS
+  // =========================
 
   const fetchFavorites = async () => {
-
     try {
-
       const token = localStorage.getItem("token");
 
-
-      const res = await api.get(
-        "/favorites",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
+      const res = await api.get("/favorites", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setFavorites(res.data);
-
-
     } catch (error) {
+      console.error("Erreur favoris :", error);
 
-      console.error(
-        "Erreur favoris :",
-        error
+      showNotification(
+        "❌ Impossible de récupérer vos favoris.",
+        "error"
       );
-
     }
-
   };
-
-
 
   useEffect(() => {
-
     fetchFavorites();
-
   }, []);
 
-
-
-
+  // =========================
+  // SUPPRIMER UN FAVORI
+  // =========================
 
   const removeFavorite = async (bookId) => {
-
-
     try {
-
-
       const token = localStorage.getItem("token");
 
+      await api.delete(`/favorites/${bookId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      await api.delete(
-        `/favorites/${bookId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      showNotification(
+        "💔 Livre supprimé des favoris.",
+        "success"
       );
-
-
-
-      alert(
-        "Livre supprimé des favoris"
-      );
-
-
 
       fetchFavorites();
+    } catch (error) {
+      console.error(
+        "Erreur suppression favori :",
+        error.response?.data || error.message
+      );
 
-
-
-    } catch(error) {
-
-
-      console.error(error);
-
-
+      showNotification(
+        error.response?.data?.message ||
+          "❌ Erreur lors de la suppression du favori.",
+        "error"
+      );
     }
-
-
   };
 
-
-
-
-
   return (
+    <>
+      {/* =========================
+          NOTIFICATION
+      ========================= */}
 
-    <div
-      style={{
-        padding:"30px",
-        maxWidth:"900px",
-        margin:"auto"
-      }}
-    >
+      {notification.message && (
+        <div
+          className={`notification ${notification.type}`}
+        >
+          <span>{notification.message}</span>
 
+          <button
+            type="button"
+            onClick={() =>
+              setNotification({
+                message: "",
+                type: "",
+              })
+            }
+          >
+            ×
+          </button>
+        </div>
+      )}
 
-      <h1>
-        ❤️ Mes favoris
-      </h1>
+      {/* =========================
+          CONTENU
+      ========================= */}
 
+      <div
+        style={{
+          padding: "30px",
+          maxWidth: "900px",
+          margin: "auto",
+        }}
+      >
+        <h1>❤️ Mes favoris</h1>
 
-
-      {
-        favorites.length === 0 ? (
-
+        {favorites.length === 0 ? (
           <p>
             Aucun livre dans vos favoris.
           </p>
-
-
         ) : (
-
-
-          favorites.map((book)=>(
-
-
+          favorites.map((book) => (
             <div
-
               key={book._id}
-
               style={{
-
-                border:"1px solid #ddd",
-
-                borderRadius:"10px",
-
-                padding:"15px",
-
-                marginBottom:"15px"
-
+                border: "1px solid #ddd",
+                borderRadius: "10px",
+                padding: "15px",
+                marginBottom: "15px",
               }}
-
             >
-
-
-              <h3>
-                {book.title}
-              </h3>
-
-
+              <h3>{book.title}</h3>
 
               <p>
-                <strong>Auteur :</strong> {book.author}
+                <strong>Auteur :</strong>{" "}
+                {book.author}
               </p>
-
-
 
               <p>
-                {book.description}
+                {book.description ||
+                  "Aucune description disponible."}
               </p>
-
-
 
               <button
-
                 className="btn btn-danger"
-
                 onClick={() =>
                   removeFavorite(book._id)
                 }
-
               >
-
                 🗑️ Retirer
-
               </button>
-
-
-
             </div>
-
-
           ))
-
-        )
-
-      }
-
-
-
-    </div>
-
+        )}
+      </div>
+    </>
   );
-
 }
-
 
 export default Favorites;

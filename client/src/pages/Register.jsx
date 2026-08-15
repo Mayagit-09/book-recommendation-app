@@ -11,65 +11,148 @@ function Register() {
     password: "",
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    // Effacer le message d'erreur lorsque l'utilisateur écrit
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setErrorMessage("");
+    setLoading(true);
+
     try {
       await api.post("/users/register", form);
 
-      alert("Compte créé avec succès !");
+      // Redirection vers Login après inscription
       navigate("/login");
+
     } catch (err) {
-      alert("Erreur lors de l'inscription");
+      console.error(
+        "Erreur inscription :",
+        err.response?.data || err.message
+      );
+
+      setErrorMessage(
+        err.response?.data?.message ||
+        "Une erreur est survenue lors de l'inscription."
+      );
+
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "40px auto" }}>
-      <h2>Créer un compte</h2>
+    <div className="auth-container">
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          placeholder="Nom d'utilisateur"
-          onChange={handleChange}
-          required
-        />
+      <div className="auth-card">
 
-        <br /><br />
+        <div className="register-icon">
+          📚
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-        />
+        <h2>Créer un compte</h2>
 
-        <br /><br />
+        <p className="auth-subtitle">
+          Rejoignez notre communauté de lecteurs
+        </p>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Mot de passe"
-          onChange={handleChange}
-          required
-        />
+        {/* Message d'erreur */}
+        {errorMessage && (
+          <div className="register-error">
+            <span>⚠️</span>
+            <span>{errorMessage}</span>
+          </div>
+        )}
 
-        <br /><br />
+        <form onSubmit={handleSubmit}>
 
-        <button type="submit">
-          S'inscrire
-        </button>
-      </form>
+          {/* Nom d'utilisateur */}
+          <div className="form-group">
+            <label htmlFor="username">
+              Nom d'utilisateur
+            </label>
+
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Nom d'utilisateur"
+              value={form.username}
+              onChange={handleChange}
+              autoComplete="username"
+              required
+            />
+          </div>
+
+          {/* Email */}
+          <div className="form-group">
+            <label htmlFor="email">
+              Email
+            </label>
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              autoComplete="email"
+              required
+            />
+          </div>
+
+          {/* Mot de passe */}
+          <div className="form-group">
+            <label htmlFor="password">
+              Mot de passe
+            </label>
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Mot de passe"
+              value={form.password}
+              onChange={handleChange}
+              autoComplete="new-password"
+              required
+            />
+          </div>
+
+          {/* Bouton */}
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? "Création du compte..." : "S'inscrire"}
+          </button>
+
+        </form>
+
+        <p className="auth-link">
+          Vous avez déjà un compte ?{" "}
+          <span onClick={() => navigate("/login")}>
+            Se connecter
+          </span>
+        </p>
+
+      </div>
+
     </div>
   );
 }

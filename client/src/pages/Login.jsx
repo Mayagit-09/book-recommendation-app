@@ -1,176 +1,158 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-
+import "./Login.css";
 
 function Login() {
-
   const navigate = useNavigate();
-
 
   const [form, setForm] = useState({
     email: "",
     password: ""
   });
 
-
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-
     setForm({
       ...form,
       [e.target.name]: e.target.value
     });
 
+    // Effacer le message d'erreur lorsque l'utilisateur recommence à écrire
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   };
 
-
-
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
-
-    console.log("Formulaire envoyé :", form);
-
-
+    setErrorMessage("");
+    setLoading(true);
 
     try {
+      const res = await api.post("/users/login", form);
 
+      // Enregistrer le token JWT
+      localStorage.setItem("token", res.data.token);
 
-      const res = await api.post(
-        "/users/login",
-        form
-      );
-
-
-      console.log(
-        "Réponse backend :",
-        res.data
-      );
-
-
-
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
-
-
-
+      // Enregistrer les informations de l'utilisateur
       localStorage.setItem(
         "user",
         JSON.stringify(res.data.user)
       );
 
-
-
-      console.log(
-        "TOKEN ENREGISTRÉ :",
-        localStorage.getItem("token")
-      );
-
-
-
-      alert("Connexion réussie !");
-
-
+      // Redirection vers l'accueil
       navigate("/");
 
-
-
-    } catch(error) {
-
-
+    } catch (error) {
       console.error(
         "Erreur login :",
         error.response?.data || error.message
       );
 
-
-      alert(
-        "Erreur de connexion"
+      setErrorMessage(
+        error.response?.data?.message ||
+        "Email ou mot de passe incorrect."
       );
 
-
+    } finally {
+      setLoading(false);
     }
-
   };
 
-
-
   return (
+    <div className="login-page">
 
-    <div
-      style={{
-        maxWidth:"400px",
-        margin:"40px auto"
-      }}
-    >
+      <div className="login-card">
 
-      <h2>
-        Connexion
-      </h2>
+        {/* Icône */}
+        <div className="login-icon">
+          📚
+        </div>
 
+        {/* Titre */}
+        <h2>Connexion</h2>
 
-      <form onSubmit={handleSubmit}>
+        <p className="login-subtitle">
+          Bienvenue sur l'application de recommandation de livres
+        </p>
 
+        {/* Message d'erreur */}
+        {errorMessage && (
+          <div className="login-error">
+            <span>⚠️</span>
+            <span>{errorMessage}</span>
+          </div>
+        )}
 
-        <input
+        {/* Formulaire */}
+        <form onSubmit={handleSubmit}>
 
-          type="email"
+          {/* Email */}
+          <div className="input-group">
+            <label htmlFor="email">
+              Email
+            </label>
 
-          name="email"
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Entrez votre email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          placeholder="Email"
+          {/* Mot de passe */}
+          <div className="input-group">
+            <label htmlFor="password">
+              Mot de passe
+            </label>
 
-          value={form.email}
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Entrez votre mot de passe"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          onChange={handleChange}
+          {/* Bouton connexion */}
+          <button
+            type="submit"
+            className="login-button"
+            disabled={loading}
+          >
+            {loading ? "Connexion..." : "Se connecter"}
+          </button>
 
-          required
+        </form>
 
-        />
+        {/* Inscription */}
+        <p className="register-text">
+          Vous n'avez pas encore de compte ?
+        </p>
 
-
-        <br/><br/>
-
-
-        <input
-
-          type="password"
-
-          name="password"
-
-          placeholder="Mot de passe"
-
-          value={form.password}
-
-          onChange={handleChange}
-
-          required
-
-        />
-
-
-        <br/><br/>
-
-
-        <button type="submit">
-
-          Se connecter
-
+        <button
+          type="button"
+          className="register-button"
+          onClick={() => navigate("/register")}
+        >
+          Créer un compte
         </button>
 
-
-      </form>
-
+      </div>
 
     </div>
-
   );
-
 }
-
 
 export default Login;
