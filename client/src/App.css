@@ -32,56 +32,350 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
-.edit-form {
-  margin-top: 20px;
-  padding: 25px;
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-}
 
-.edit-form::before {
-  content: "✏️ Modifier le livre";
-  display: block;
-  text-align: center;
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #333;
-}
+/* ===================================================== */
+/* FENÊTRE MODIFICATION LIVRE */
+/* ===================================================== */
 
-.edit-input {
-  display: block;
-  width: 100%;
+.edit-overlay {
+  position: fixed !important;
+
+  top: 0 !important;
+  left: 0 !important;
+
+  width: 100vw !important;
+  height: 100vh !important;
+
+  background: rgba(0, 0, 0, 0.65) !important;
+
+  display: flex !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+
+  padding: 20px;
+
   box-sizing: border-box;
-  padding: 11px 14px;
-  margin-bottom: 15px;
 
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  z-index: 999999 !important;
+}
+
+
+/* ===================================================== */
+/* FENÊTRE BLANCHE */
+/* ===================================================== */
+
+.edit-modal {
+  position: relative;
+
+  width: 600px;
+
+  max-width: 95vw;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4);
+
+  animation: editModalAppear 0.25s ease-out;
+}
+
+
+/* ===================================================== */
+/* ANIMATION */
+/* ===================================================== */
+
+@keyframes editModalAppear {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-30px)
+      scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+/* ===================================================== */
+/* HEADER */
+/* ===================================================== */
+
+.edit-modal-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 20px 25px;
+
+  border-bottom: 1px solid #eeeeee;
+}
+
+.edit-modal-header h2 {
+
+  margin: 0;
+
+  font-size: 24px;
+
+  color: #263238;
+}
+
+
+/* ===================================================== */
+/* BOUTON FERMER */
+/* ===================================================== */
+
+.close-button {
+
+  border: none;
+
+  background: transparent;
+
+  font-size: 32px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  color: #777;
+
+  padding: 0 5px;
+
+  transition: 0.2s;
+}
+
+.close-button:hover {
+
+  color: #e53935;
+
+  transform: scale(1.1);
+}
+
+
+/* ===================================================== */
+/* FORMULAIRE */
+/* ===================================================== */
+
+.edit-modal form {
+
+  padding: 25px;
+}
+
+
+/* ===================================================== */
+/* CHAMPS */
+/* ===================================================== */
+
+.form-group {
+
+  margin-bottom: 18px;
+}
+
+.form-group label {
+
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-weight: 600;
+
+  color: #37474f;
+
+  text-align: left;
+}
+
+.form-group input,
+.form-group textarea {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  border: 1px solid #d6d6d6;
+
+  border-radius: 10px;
 
   font-size: 15px;
+
   font-family: inherit;
 
-  background: white;
   outline: none;
 
   transition: 0.2s;
 }
 
-.edit-input:focus {
-  border-color: #198754;
-  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.12);
+.form-group input:focus,
+.form-group textarea:focus {
+
+  border-color: #26a69a;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(38, 166, 154, 0.15);
 }
 
-.edit-textarea {
+.form-group textarea {
+
   min-height: 120px;
+
   resize: vertical;
 }
 
+
+/* ===================================================== */
+/* BOUTONS DU BAS */
+/* ===================================================== */
+
+.edit-modal-footer {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 25px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid #eeeeee;
+}
+
+
+/* ANNULER */
+
+.cancel-button {
+
+  border: none;
+
+  padding: 11px 22px;
+
+  border-radius: 10px;
+
+  background: #eeeeee;
+
+  color: #444;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.cancel-button:hover {
+
+  background: #dddddd;
+}
+
+
+/* ENREGISTRER */
+
+.save-button {
+
+  border: none;
+
+  padding: 11px 22px;
+
+  border-radius: 10px;
+
+  background: #26a69a;
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.save-button:hover {
+
+  background: #1e8e83;
+}
+
+.save-button:disabled,
+.cancel-button:disabled {
+
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* ===================================================== */
+/* MOBILE */
+/* ===================================================== */
+
+@media (max-width: 600px) {
+
+  .edit-overlay {
+
+    padding: 10px;
+  }
+
+  .edit-modal {
+
+    width: 100%;
+
+    max-width: 100%;
+  }
+
+  .edit-modal-header {
+
+    padding: 16px 18px;
+  }
+
+  .edit-modal-header h2 {
+
+    font-size: 20px;
+  }
+
+  .edit-modal form {
+
+    padding: 18px;
+  }
+
+  .edit-modal-footer {
+
+    flex-direction: column;
+  }
+
+  .cancel-button,
+  .save-button {
+
+    width: 100%;
+  }
+
+}

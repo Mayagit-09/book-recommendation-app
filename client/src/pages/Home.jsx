@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import api from "../services/api";
 
 import AddBook from "../components/AddBook";
@@ -8,13 +7,16 @@ import EditBook from "../components/EditBook";
 import Rating from "../components/Rating";
 
 import library from "../assets/library.jpg";
+
 import { useNavigate } from "react-router-dom";
 import { FaHeart, FaEdit, FaTrash } from "react-icons/fa";
 
 function Home() {
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState("");
-  const [editId, setEditId] = useState(null);
+
+  // Livre actuellement sélectionné pour modification
+  const [editingBook, setEditingBook] = useState(null);
 
   // Notification
   const [notification, setNotification] = useState({
@@ -24,9 +26,9 @@ function Home() {
 
   const navigate = useNavigate();
 
-  // =========================
+  // =====================================================
   // NOTIFICATION
-  // =========================
+  // =====================================================
 
   const showNotification = (message, type = "success") => {
     setNotification({
@@ -42,43 +44,53 @@ function Home() {
     }, 3000);
   };
 
-  // =========================
+  // =====================================================
   // RÉCUPÉRER LES LIVRES
-  // =========================
+  // =====================================================
 
   const fetchBooks = async () => {
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const res = await api.get("/books", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const response = await api.get("/books", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setBooks(res.data);
+      setBooks(response.data);
+    } catch (error) {
+      console.error(
+        "Erreur récupération livres :",
+        error
+      );
 
-  } catch (error) {
-    console.error("Erreur récupération livres :", error);
-    console.error("Status :", error.response?.status);
-    console.error("Message :", error.response?.data);
+      console.error(
+        "Status :",
+        error.response?.status
+      );
 
-    // Si le token est invalide ou absent
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/login");
+      console.error(
+        "Message :",
+        error.response?.data
+      );
+
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        navigate("/login");
+      }
     }
-  }
-};
+  };
 
   useEffect(() => {
     fetchBooks();
   }, []);
 
-  // =========================
+  // =====================================================
   // SUPPRIMER UN LIVRE
-  // =========================
+  // =====================================================
 
   const deleteBook = async (id) => {
     const confirmed = window.confirm(
@@ -104,9 +116,11 @@ function Home() {
       );
 
       fetchBooks();
-
     } catch (error) {
-      console.error("Erreur suppression :", error);
+      console.error(
+        "Erreur suppression :",
+        error
+      );
 
       showNotification(
         error.response?.data?.message ||
@@ -116,9 +130,9 @@ function Home() {
     }
   };
 
-  // =========================
+  // =====================================================
   // AJOUTER AUX FAVORIS
-  // =========================
+  // =====================================================
 
   const addFavorite = async (bookId) => {
     try {
@@ -138,9 +152,11 @@ function Home() {
         "❤️ Livre ajouté aux favoris !",
         "success"
       );
-
     } catch (error) {
-      console.error("Erreur favoris :", error);
+      console.error(
+        "Erreur favoris :",
+        error
+      );
 
       showNotification(
         error.response?.data?.message ||
@@ -150,9 +166,9 @@ function Home() {
     }
   };
 
-  // =========================
+  // =====================================================
   // RECHERCHE LOCALE
-  // =========================
+  // =====================================================
 
   const filteredBooks = books.filter((book) => {
     const searchText = search.toLowerCase();
@@ -170,15 +186,15 @@ function Home() {
     );
   });
 
-  // =========================
+  // =====================================================
   // AFFICHAGE
-  // =========================
+  // =====================================================
 
   return (
     <>
-      {/* =========================
+      {/* =================================================
           NOTIFICATION
-      ========================= */}
+      ================================================= */}
 
       {notification.message && (
         <div
@@ -200,9 +216,9 @@ function Home() {
         </div>
       )}
 
-      {/* =========================
+      {/* =================================================
           HERO
-      ========================= */}
+      ================================================= */}
 
       <div
         className="hero mb-5"
@@ -236,15 +252,18 @@ function Home() {
         </div>
       </div>
 
-      {/* =========================
+      {/* =================================================
           RECHERCHE OPEN LIBRARY
-      ========================= */}
+      ================================================= */}
 
-      <BookSearch onBookAdded={fetchBooks} />
+      <BookSearch
+        onBookAdded={fetchBooks}
+        showNotification={showNotification}
+      />
 
-      {/* =========================
+      {/* =================================================
           BOUTON AJOUTER
-      ========================= */}
+      ================================================= */}
 
       <div className="text-center my-4">
         <button
@@ -256,29 +275,35 @@ function Home() {
         </button>
       </div>
 
-      {/* =========================
+      {/* =================================================
           MODAL AJOUT
-      ========================= */}
+          Celui-ci reste avec Bootstrap
+      ================================================= */}
 
-      <AddBook onBookAdded={fetchBooks} />
+      <AddBook
+        onBookAdded={fetchBooks}
+        showNotification={showNotification}
+      />
 
       <hr className="my-5" />
 
-      {/* =========================
+      {/* =================================================
           RECHERCHE LOCALE
-      ========================= */}
+      ================================================= */}
 
       <input
         className="form-control search-box mb-5"
         type="text"
         placeholder="🔍 Rechercher dans mes livres..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) =>
+          setSearch(e.target.value)
+        }
       />
 
-      {/* =========================
+      {/* =================================================
           TITRE BIBLIOTHÈQUE
-      ========================= */}
+      ================================================= */}
 
       <div id="books-section">
         <h2 className="mb-4">
@@ -286,9 +311,9 @@ function Home() {
         </h2>
       </div>
 
-      {/* =========================
+      {/* =================================================
           LIVRES
-      ========================= */}
+      ================================================= */}
 
       {filteredBooks.length === 0 ? (
         <div className="text-center my-5">
@@ -305,10 +330,6 @@ function Home() {
               className="book-item"
               key={book._id}
             >
-              {/* =========================
-                  CARTE
-              ========================= */}
-
               <div className="book-card">
 
                 {/* IMAGE */}
@@ -359,7 +380,8 @@ function Home() {
                     <strong>
                       Genre :
                     </strong>{" "}
-                    {book.genre || "Non classé"}
+                    {book.genre ||
+                      "Non classé"}
                   </p>
 
                   {/* NOTE */}
@@ -375,13 +397,13 @@ function Home() {
                     onRated={fetchBooks}
                   />
 
-                  {/* =========================
+                  {/* =================================================
                       BOUTONS
-                  ========================= */}
+                  ================================================= */}
 
                   <div className="book-actions">
 
-                    {/* DÉTAIL */}
+                    {/* DÉTAILS */}
 
                     <button
                       className="btn btn-primary"
@@ -407,12 +429,17 @@ function Home() {
                       <span>Favori</span>
                     </button>
 
-                    {/* MODIFIER */}
+                    {/* =================================================
+                        MODIFIER
+                        IMPORTANT :
+                        Aucun data-bs-toggle ici
+                    ================================================= */}
 
                     <button
+                      type="button"
                       className="btn btn-warning"
                       onClick={() =>
-                        setEditId(book._id)
+                        setEditingBook(book)
                       }
                     >
                       <FaEdit />
@@ -422,6 +449,7 @@ function Home() {
                     {/* SUPPRIMER */}
 
                     <button
+                      type="button"
                       className="btn btn-danger"
                       onClick={() =>
                         deleteBook(book._id)
@@ -433,30 +461,6 @@ function Home() {
 
                   </div>
 
-                  {/* =========================
-                      MODIFICATION
-                  ========================= */}
-
-                  {editId === book._id && (
-                    <div className="mt-4">
-                      <EditBook
-                        book={book}
-                        onBookUpdated={() => {
-                          fetchBooks();
-                          setEditId(null);
-
-                          showNotification(
-                            "✏️ Livre modifié avec succès !",
-                            "success"
-                          );
-                        }}
-                        onClose={() =>
-                          setEditId(null)
-                        }
-                      />
-                    </div>
-                  )}
-
                 </div>
               </div>
             </div>
@@ -464,9 +468,47 @@ function Home() {
         </div>
       )}
 
-      {/* =========================
+      {/* =================================================
+          FENÊTRE MODIFICATION
+          
+          Elle est en dehors de la boucle map().
+          
+          React l'affiche uniquement lorsqu'un livre
+          est sélectionné.
+      ================================================= */}
+
+      {editingBook && (
+        <EditBook
+          book={editingBook}
+
+          onClose={() => {
+            setEditingBook(null);
+          }}
+
+          onBookUpdated={(updatedBook) => {
+            setBooks((previousBooks) =>
+              previousBooks.map((book) =>
+                book._id === updatedBook._id
+                  ? updatedBook
+                  : book
+              )
+            );
+
+            setEditingBook(null);
+
+            showNotification(
+              "✏️ Livre modifié avec succès !",
+              "success"
+            );
+          }}
+
+          showNotification={showNotification}
+        />
+      )}
+
+      {/* =================================================
           FOOTER
-      ========================= */}
+      ================================================= */}
 
       <footer>
         <h3>
@@ -480,7 +522,8 @@ function Home() {
         </p>
 
         <p>
-          © 2026 Book Recommendation App — Tous droits réservés.
+          © 2026 Book Recommendation App —
+          Tous droits réservés.
         </p>
       </footer>
     </>

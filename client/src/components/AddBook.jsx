@@ -8,6 +8,7 @@ function AddBook({ onBookAdded, showNotification }) {
     description: "",
     image: "",
     genre: "",
+    rating: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -22,18 +23,53 @@ function AddBook({ onBookAdded, showNotification }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation du titre
+    if (!book.title.trim()) {
+      showNotification(
+        "📖 Veuillez saisir le titre du livre.",
+        "error"
+      );
+      return;
+    }
+
+    // Validation de l'auteur
+    if (!book.author.trim()) {
+      showNotification(
+        "✍️ Veuillez saisir le nom de l'auteur.",
+        "error"
+      );
+      return;
+    }
+
+    // Validation du rating
+    const rating = Number(book.rating);
+
+    if (!book.rating || rating < 1 || rating > 5) {
+      showNotification(
+        "⭐ La note doit être comprise entre 1 et 5.",
+        "error"
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
       const token = localStorage.getItem("token");
 
-      await api.post("/books", book, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await api.post(
+        "/books",
+        {
+          ...book,
+          rating,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Notification de succès
       showNotification(
         "📚 Livre ajouté avec succès !",
         "success"
@@ -46,10 +82,13 @@ function AddBook({ onBookAdded, showNotification }) {
         description: "",
         image: "",
         genre: "",
+        rating: "",
       });
 
       // Actualiser la liste des livres
-      onBookAdded();
+      if (onBookAdded) {
+        onBookAdded();
+      }
 
       // Fermer la fenêtre
       document
@@ -62,10 +101,9 @@ function AddBook({ onBookAdded, showNotification }) {
         error.response?.data || error.message
       );
 
-      // Notification d'erreur
       showNotification(
         error.response?.data?.message ||
-          "Erreur lors de l'ajout du livre.",
+          "❌ Erreur lors de l'ajout du livre.",
         "error"
       );
 
@@ -84,10 +122,7 @@ function AddBook({ onBookAdded, showNotification }) {
       <div className="modal-dialog modal-lg">
         <div className="modal-content rounded-4">
 
-          {/* =========================
-              HEADER
-          ========================= */}
-
+          {/* HEADER */}
           <div className="modal-header">
 
             <h3 className="modal-title">
@@ -103,16 +138,12 @@ function AddBook({ onBookAdded, showNotification }) {
 
           </div>
 
-          {/* =========================
-              BODY
-          ========================= */}
-
+          {/* BODY */}
           <div className="modal-body">
 
             <form onSubmit={handleSubmit}>
 
               {/* TITRE */}
-
               <input
                 className="form-control form-control-lg mb-3"
                 name="title"
@@ -123,7 +154,6 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* AUTEUR */}
-
               <input
                 className="form-control form-control-lg mb-3"
                 name="author"
@@ -134,7 +164,6 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* GENRE */}
-
               <input
                 className="form-control form-control-lg mb-3"
                 name="genre"
@@ -143,8 +172,21 @@ function AddBook({ onBookAdded, showNotification }) {
                 onChange={handleChange}
               />
 
-              {/* IMAGE */}
+              {/* RATING */}
+              <input
+                type="number"
+                className="form-control form-control-lg mb-3"
+                name="rating"
+                placeholder="⭐ Note (1 à 5)"
+                value={book.rating}
+                onChange={handleChange}
+                min="1"
+                max="5"
+                step="0.1"
+                required
+              />
 
+              {/* IMAGE */}
               <input
                 className="form-control form-control-lg mb-3"
                 name="image"
@@ -154,7 +196,6 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* DESCRIPTION */}
-
               <textarea
                 className="form-control mb-4"
                 rows="4"
@@ -165,7 +206,6 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* BOUTON */}
-
               <button
                 className="btn btn-warning btn-lg w-100"
                 type="submit"
