@@ -1,25 +1,26 @@
-# 🔐 Phase 2 – Authentication & Authorization
+# Phase 4 – Book Details and Rating System
 
-During this phase, I implemented a complete user authentication and authorization system for the **Book Recommendation App**.
+## Objective
 
-## Work Completed
+Display detailed information about a selected book and allow users to rate books.
 
-- Designed and implemented user registration and login forms.
-- Implemented user registration and login functionality.
-- Secured user passwords using **bcrypt password hashing**.
-- Implemented authentication using **JSON Web Tokens (JWT)**.
-- Created an authentication middleware to verify JWT tokens.
-- Protected routes that require user authentication.
-- Secured book-related actions such as adding, updating, deleting, and rating books.
-- Implemented logout functionality by removing the authentication token.
-- Connected the React frontend with the Node.js/Express backend to handle authentication.
+## Features Implemented
 
-## Result
+* Created a Book Details page to display detailed information about a selected book.
+* Retrieved book details from the MongoDB database using the book ID.
+* Displayed the book's title, author, description, genre, image, and current rating.
+* Implemented a rating system that allows users to rate books from 1 to 5 stars.
+* Added interactive star selection with hover effects.
+* Implemented backend logic to validate and save user ratings.
+* Protected the rating route using JWT authentication.
+* Updated the book rating dynamically after the user submits a rating.
 
-Users can now create an account, log in securely, access protected features, and log out of the application.
+## Technologies Used
 
-All changes made during this phase were version-controlled and pushed to the project's GitHub repository.
-
-## 👩‍💻 Author
-
-**Asma Rabahi**
+* React
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* Axios
+* JWT Authentication
