@@ -379,3 +379,152 @@
   }
 
 }
+
+/* ===================================================== */
+/* RATING */
+/* ===================================================== */
+
+.rating-container {
+  margin-top: 18px;
+  margin-bottom: 18px;
+  padding: 15px;
+
+  background: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  text-align: center;
+}
+
+/* TITRE */
+
+.rating-title {
+  margin-bottom: 10px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+/* CONTENEUR DES ÉTOILES */
+
+.rating-stars {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 3px;
+}
+
+/* BOUTON ÉTOILE */
+
+.rating-stars .rating-star {
+  appearance: none;
+  -webkit-appearance: none;
+
+  border: none !important;
+  outline: none !important;
+
+  background: transparent !important;
+
+  box-shadow: none !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  width: auto !important;
+  height: auto !important;
+
+  font-size: 32px !important;
+  line-height: 1 !important;
+
+  color: #d1d5db !important;
+
+  cursor: pointer;
+
+  transition: transform 0.2s ease,
+              color 0.2s ease;
+}
+
+/* ÉTOILE ACTIVE */
+
+.rating-stars .rating-star.active {
+  color: #ffc107 !important;
+}
+
+/* SURVOL */
+
+.rating-stars .rating-star:hover {
+  color: #ffb300 !important;
+
+  transform: scale(1.2);
+}
+
+/* VALEUR */
+
+.rating-value {
+  display: inline-block;
+
+  margin-top: 10px;
+
+  padding: 5px 12px;
+
+  border-radius: 20px;
+
+  background: #fff7ed;
+
+  color: #92400e;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+/* CHARGEMENT */
+
+.rating-loading {
+  margin-top: 8px;
+
+  font-size: 13px;
+
+  color: #26a69a;
+}
+
+/* DARK MODE */
+
+body.dark .rating-container {
+  background: #1e1e1e;
+  border-color: #333;
+}
+
+body.dark .rating-title {
+  color: #eee;
+}
+
+body.dark .rating-stars .rating-star {
+  color: #555 !important;
+}
+
+body.dark .rating-stars .rating-star.active {
+  color: #ffc107 !important;
+}
+
+body.dark .rating-value {
+  background: #3a2f16;
+  color: #ffc107;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .rating-star {
+    font-size: 27px !important;
+  }
+
+  .rating-container {
+    padding: 12px;
+  }
+
+}

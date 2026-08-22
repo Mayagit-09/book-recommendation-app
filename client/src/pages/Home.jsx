@@ -384,12 +384,6 @@ function Home() {
                       "Non classé"}
                   </p>
 
-                  {/* NOTE */}
-
-                  <p className="card-text">
-                    ⭐ {book.rating || 0}/5
-                  </p>
-
                   {/* RATING */}
 
                   <Rating

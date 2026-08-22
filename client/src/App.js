@@ -1,6 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
+import "./App.css";
+
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -18,6 +20,10 @@ function App() {
 
       <Routes>
 
+        {/* ========================= */}
+        {/* ACCUEIL */}
+        {/* ========================= */}
+
         <Route
           path="/"
           element={
@@ -27,15 +33,27 @@ function App() {
           }
         />
 
+        {/* ========================= */}
+        {/* CONNEXION */}
+        {/* ========================= */}
+
         <Route
           path="/login"
           element={<Login />}
         />
 
+        {/* ========================= */}
+        {/* INSCRIPTION */}
+        {/* ========================= */}
+
         <Route
           path="/register"
           element={<Register />}
         />
+
+        {/* ========================= */}
+        {/* FAVORIS */}
+        {/* ========================= */}
 
         <Route
           path="/favorites"
@@ -46,6 +64,10 @@ function App() {
           }
         />
 
+        {/* ========================= */}
+        {/* DÉTAILS DU LIVRE */}
+        {/* ========================= */}
+
         <Route
           path="/books/:id"
           element={
@@ -55,14 +77,13 @@ function App() {
           }
         />
 
+        {/* ========================= */}
+        {/* ABOUT */}
+        {/* ========================= */}
+
         <Route
           path="/about"
           element={<About />}
-        />
-
-        <Route 
-           path="/books/:id" 
-           element={<BookDetails />} 
         />
 
       </Routes>

@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import api from "../services/api";
 
-function Rating({ book, onRated, showNotification }) {
+function Rating({ book, onRated }) {
+  const [rating, setRating] = useState(book.rating || 0);
+  const [hover, setHover] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const rateBook = async (value) => {
-    if (loading) return;
-
+  const handleRating = async (value) => {
     try {
       setLoading(true);
 
       const token = localStorage.getItem("token");
 
-      await api.put(
+      const response = await api.put(
         `/books/${book._id}/rating`,
         {
           rating: value,
@@ -24,58 +24,66 @@ function Rating({ book, onRated, showNotification }) {
         }
       );
 
-      // Notification professionnelle
-      showNotification(
-        `⭐ Note de ${value}/5 enregistrée !`,
-        "success"
-      );
+      setRating(value);
 
-      // Actualiser le livre
       if (onRated) {
-        onRated();
+        onRated(response.data.book);
       }
 
     } catch (error) {
-      console.error(
-        "Erreur notation :",
-        error.response?.data || error.message
-      );
+      console.error("Erreur rating :", error);
 
-      showNotification(
+      alert(
         error.response?.data?.message ||
-          "❌ Erreur lors de l'enregistrement de la note.",
-        "error"
+          "Erreur lors de l'enregistrement de la note."
       );
-
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <p>
-        Donner une note :
-      </p>
+    <div className="rating-container">
 
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          onClick={() => rateBook(star)}
-          disabled={loading}
-          title={`Noter ${star}/5`}
-          style={{
-            fontSize: "22px",
-            cursor: loading ? "not-allowed" : "pointer",
-            border: "none",
-            background: "transparent",
-            opacity: loading ? 0.6 : 1,
-          }}
-        >
-          ⭐
-        </button>
-      ))}
+      <div className="rating-title">
+        Votre note
+      </div>
+
+      <div className="rating-stars">
+
+        {[1, 2, 3, 4, 5].map((star) => (
+
+          <button
+            key={star}
+            type="button"
+            className={`rating-star ${
+              star <= (hover || rating)
+                ? "active"
+                : ""
+            }`}
+            onClick={() => handleRating(star)}
+            onMouseEnter={() => setHover(star)}
+            onMouseLeave={() => setHover(0)}
+            disabled={loading}
+            aria-label={`Noter ${star} sur 5`}
+          >
+            ★
+          </button>
+
+        ))}
+
+      </div>
+
+      <div className="rating-value">
+        ⭐ {rating || 0}/5
+      </div>
+
+      {loading && (
+        <div className="rating-loading">
+          Enregistrement...
+        </div>
+      )}
+
     </div>
   );
 }

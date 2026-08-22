@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
+import Rating from "../components/Rating";
 
 function BookDetails() {
   const { id } = useParams();
@@ -61,7 +62,10 @@ function BookDetails() {
           </p>
 
           <p>{book.description}</p>
-
+            <Rating
+              book={book}
+              onRated={(updatedBook) => setBook(updatedBook)}
+            />
         </div>
 
       </div>
