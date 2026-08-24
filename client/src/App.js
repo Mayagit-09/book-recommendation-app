@@ -1,8 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import "./App.css";
-
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -21,11 +19,9 @@ function App() {
       <Navbar />
 
       <Routes>
-
         {/* ========================= */}
         {/* ACCUEIL */}
         {/* ========================= */}
-
         <Route
           path="/"
           element={
@@ -38,7 +34,6 @@ function App() {
         {/* ========================= */}
         {/* CONNEXION */}
         {/* ========================= */}
-
         <Route
           path="/login"
           element={<Login />}
@@ -47,7 +42,6 @@ function App() {
         {/* ========================= */}
         {/* INSCRIPTION */}
         {/* ========================= */}
-
         <Route
           path="/register"
           element={<Register />}
@@ -56,7 +50,6 @@ function App() {
         {/* ========================= */}
         {/* FAVORIS */}
         {/* ========================= */}
-
         <Route
           path="/favorites"
           element={
@@ -69,7 +62,6 @@ function App() {
         {/* ========================= */}
         {/* DÉTAILS DU LIVRE */}
         {/* ========================= */}
-
         <Route
           path="/books/:id"
           element={
@@ -78,25 +70,30 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        {/* ========================= */}
+        {/* PROFIL */}
+        {/* ========================= */}
         <Route
           path="/profile"
           element={<Profile />}
-          />
+        />
 
-          <Route
+        {/* ========================= */}
+        {/* RECOMMANDATIONS */}
+        {/* ========================= */}
+        <Route
           path="/recommendations"
           element={<Recommendations />}
-          />
+        />
 
         {/* ========================= */}
         {/* ABOUT */}
         {/* ========================= */}
-
         <Route
           path="/about"
           element={<About />}
         />
-
       </Routes>
     </>
   );

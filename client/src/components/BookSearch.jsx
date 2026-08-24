@@ -1,5 +1,11 @@
 import { useState } from "react";
 import api from "../services/api";
+import {
+  FaSearch,
+  FaBook,
+  FaPlus,
+  FaSpinner,
+} from "react-icons/fa";
 
 function BookSearch({ onBookAdded, showNotification }) {
   const [query, setQuery] = useState("");
@@ -35,15 +41,16 @@ function BookSearch({ onBookAdded, showNotification }) {
           "error"
         );
       }
-
     } catch (error) {
-      console.error("Erreur recherche :", error);
+      console.error(
+        "Erreur recherche :",
+        error
+      );
 
       showNotification(
         "❌ Erreur lors de la recherche.",
         "error"
       );
-
     } finally {
       setLoading(false);
     }
@@ -85,11 +92,11 @@ function BookSearch({ onBookAdded, showNotification }) {
       if (onBookAdded) {
         onBookAdded();
       }
-
     } catch (error) {
       console.error(
         "Erreur ajout :",
-        error.response?.data || error.message
+        error.response?.data ||
+          error.message
       );
 
       showNotification(
@@ -97,62 +104,93 @@ function BookSearch({ onBookAdded, showNotification }) {
           "❌ Erreur lors de l'ajout du livre.",
         "error"
       );
-
     } finally {
       setAddingBook(null);
     }
   };
 
+  // =========================
+  // AFFICHAGE
+  // =========================
+
   return (
-    <div className="my-5">
+    <section className="book-search-section my-5">
 
       {/* =========================
           TITRE
       ========================= */}
 
-      <h3 className="text-center mb-3">
-        🔍 Recherche de livres
-      </h3>
+      <div className="text-center mb-4">
+
+        <div className="mb-2">
+          <FaBook
+            size={30}
+            className="text-primary"
+            aria-hidden="true"
+          />
+        </div>
+
+        <h3 className="fw-bold mb-2">
+          Rechercher des livres
+        </h3>
+
+        <p className="text-muted mb-0">
+          Recherchez un livre et ajoutez-le
+          directement à votre bibliothèque.
+        </p>
+
+      </div>
 
       {/* =========================
           BARRE DE RECHERCHE
       ========================= */}
 
-      <div className="d-flex justify-content-center align-items-center gap-2">
+      <div className="book-search-bar">
 
-        <input
-          className="form-control"
-          style={{
-            maxWidth: "500px",
-            height: "50px",
-            borderRadius: "12px",
-            fontSize: "16px",
-          }}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              searchBooks();
+        <div className="book-search-input">
+
+          <FaSearch
+            className="search-icon"
+            aria-hidden="true"
+          />
+
+          <input
+            type="text"
+            className="form-control"
+            value={query}
+            onChange={(e) =>
+              setQuery(e.target.value)
             }
-          }}
-          placeholder="Ex : Harry Potter"
-        />
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                searchBooks();
+              }
+            }}
+            placeholder="Ex : Harry Potter, Le Petit Prince..."
+            aria-label="Rechercher un livre"
+          />
+
+        </div>
 
         <button
-          className="btn btn-warning"
-          style={{
-            height: "50px",
-            padding: "0 25px",
-            borderRadius: "12px",
-            fontWeight: "600",
-            whiteSpace: "nowrap",
-          }}
+          className="btn btn-warning search-button"
           onClick={searchBooks}
           disabled={loading}
+          type="button"
         >
-          {loading
-            ? "Recherche..."
-            : "🔍 Rechercher"}
+
+          {loading ? (
+            <>
+              <FaSpinner className="spinner-icon me-2" />
+              Recherche...
+            </>
+          ) : (
+            <>
+              <FaSearch className="me-2" />
+              Rechercher
+            </>
+          )}
+
         </button>
 
       </div>
@@ -161,70 +199,124 @@ function BookSearch({ onBookAdded, showNotification }) {
           RÉSULTATS
       ========================= */}
 
-      <div className="mt-4">
+      {books.length > 0 && (
+        <div className="mt-5">
 
-        {books.map((book) => (
-          <div
-            key={book.id}
-            style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              marginTop: "15px",
-              borderRadius: "12px",
-            }}
-          >
+          <div className="d-flex justify-content-between align-items-center mb-3">
 
-            <h3>{book.title}</h3>
+            <h4 className="fw-bold mb-0">
+              📚 Résultats
+            </h4>
 
-            <p>
-              <strong>Auteur :</strong>{" "}
-              {book.author}
-            </p>
-
-            {book.image && (
-              <img
-                src={book.image}
-                alt={book.title}
-                width="120"
-                style={{
-                  borderRadius: "8px",
-                  marginBottom: "15px",
-                }}
-              />
-            )}
-
-            <br />
-
-            {/* =========================
-                BOUTON AJOUTER
-            ========================= */}
-
-            <button
-              onClick={() => addBook(book)}
-              className="btn btn-success"
-              disabled={addingBook === book.id}
-              style={{
-                borderRadius: "12px",
-                padding: "10px 18px",
-                fontWeight: "600",
-                border: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                transition: "all 0.2s ease",
-              }}
-            >
-              {addingBook === book.id
-                ? "Ajout en cours..."
-                : "📚 Ajouter à ma bibliothèque"}
-            </button>
+            <span className="badge bg-primary rounded-pill">
+              {books.length} livre
+              {books.length > 1
+                ? "s"
+                : ""}
+            </span>
 
           </div>
-        ))}
 
-      </div>
+          <div className="book-search-results">
 
-    </div>
+            {books.map((book) => (
+
+              <div
+                key={book.id}
+                className="book-search-card"
+              >
+
+                {/* =========================
+                    IMAGE
+                ========================= */}
+
+                <div className="book-search-image-container">
+
+                  {book.image ? (
+                    <img
+                      src={book.image}
+                      alt={book.title}
+                      className="book-search-image"
+                    />
+                  ) : (
+                    <div className="book-search-no-image">
+                      <FaBook size={35} />
+                    </div>
+                  )}
+
+                </div>
+
+                {/* =========================
+                    INFORMATIONS
+                ========================= */}
+
+                <div className="book-search-content">
+
+                  <h4 className="book-search-title">
+                    {book.title}
+                  </h4>
+
+                  <p className="book-search-author">
+                    <strong>
+                      Auteur :
+                    </strong>{" "}
+                    {book.author ||
+                      "Auteur inconnu"}
+                  </p>
+
+                  {book.genre && (
+                    <span className="book-search-genre">
+                      {book.genre}
+                    </span>
+                  )}
+
+                  {book.description && (
+                    <p className="book-search-description">
+                      {book.description}
+                    </p>
+                  )}
+
+                  {/* =========================
+                      BOUTON AJOUTER
+                  ========================= */}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      addBook(book)
+                    }
+                    className="btn btn-success book-search-add-btn"
+                    disabled={
+                      addingBook === book.id
+                    }
+                  >
+
+                    {addingBook === book.id ? (
+                      <>
+                        <FaSpinner className="spinner-icon me-2" />
+                        Ajout en cours...
+                      </>
+                    ) : (
+                      <>
+                        <FaPlus className="me-2" />
+                        Ajouter à ma bibliothèque
+                      </>
+                    )}
+
+                  </button>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+      )}
+
+    </section>
   );
 }
 

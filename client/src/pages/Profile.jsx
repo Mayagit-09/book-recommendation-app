@@ -17,29 +17,30 @@ function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token =
-          localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
         if (!token) {
           navigate("/login");
           return;
         }
 
-        const res = await api.get(
-          "/users/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await api.get("/users/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         setProfile(res.data);
       } catch (error) {
-        console.error(
-          "Erreur profil :",
-          error
-        );
+        console.error("Erreur profil :", error);
+
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+
+          navigate("/login");
+          return;
+        }
 
         setError(
           error.response?.data?.message ||
@@ -60,7 +61,10 @@ function Profile() {
   if (loading) {
     return (
       <div className="profile-loading">
-        <h3>Chargement du profil...</h3>
+        <div>
+          <h3>📚 Chargement du profil...</h3>
+          <p>Veuillez patienter.</p>
+        </div>
       </div>
     );
   }
@@ -84,23 +88,48 @@ function Profile() {
     );
   }
 
-  if (!profile) {
-    return null;
+  // ========================================
+  // PROFIL INEXISTANT
+  // ========================================
+
+  if (!profile || !profile.user) {
+    return (
+      <div className="profile-error">
+        <h3>⚠️ Profil introuvable.</h3>
+
+        <button
+          onClick={() => navigate("/")}
+          className="btn btn-primary"
+        >
+          Retour à l'accueil
+        </button>
+      </div>
+    );
   }
+
+  // ========================================
+  // DONNÉES
+  // ========================================
 
   const user = profile.user;
 
-  const likedBooks =
-    profile.likedBooks || [];
+  const likedBooks = profile.likedBooks || [];
 
-  const comments =
-    profile.comments || [];
+  const comments = profile.comments || [];
 
-  const followers =
-    user.followers || [];
+  const followers = user.followers || [];
 
-  const following =
-    user.following || [];
+  const following = user.following || [];
+
+  const followersCount =
+    user.followersCount ?? followers.length;
+
+  const followingCount =
+    user.followingCount ?? following.length;
+
+  // ========================================
+  // AFFICHAGE
+  // ========================================
 
   return (
     <div className="profile-page">
@@ -124,6 +153,26 @@ function Profile() {
           <p>
             📧 {user.email}
           </p>
+
+          <div className="profile-actions">
+
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate("/")}
+            >
+              📚 Ma bibliothèque
+            </button>
+
+            <button
+              className="btn btn-warning"
+              onClick={() =>
+                navigate("/recommendations")
+              }
+            >
+              ✨ Recommandations
+            </button>
+
+          </div>
 
         </div>
 
@@ -157,7 +206,7 @@ function Profile() {
 
         <div className="stat-card">
           <strong>
-            {user.followersCount || 0}
+            {followersCount}
           </strong>
 
           <span>
@@ -167,7 +216,7 @@ function Profile() {
 
         <div className="stat-card">
           <strong>
-            {user.followingCount || 0}
+            {followingCount}
           </strong>
 
           <span>
@@ -230,7 +279,8 @@ function Profile() {
                     </h3>
 
                     <p>
-                      {book.author}
+                      {book.author ||
+                        "Auteur inconnu"}
                     </p>
 
                     <span>
@@ -286,7 +336,8 @@ function Profile() {
                     </h4>
 
                     <p>
-                      {comment.text}
+                      {comment.text ||
+                        "Aucun commentaire."}
                     </p>
 
                     <small>
@@ -305,7 +356,8 @@ function Profile() {
                     <img
                       src={comment.book.image}
                       alt={
-                        comment.book.title
+                        comment.book.title ||
+                        "Livre"
                       }
                     />
                   )}

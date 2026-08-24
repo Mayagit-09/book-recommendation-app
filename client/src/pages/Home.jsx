@@ -9,7 +9,14 @@ import Rating from "../components/Rating";
 import library from "../assets/library.jpg";
 
 import { useNavigate } from "react-router-dom";
-import { FaHeart, FaEdit, FaTrash } from "react-icons/fa";
+import {
+  FaHeart,
+  FaEdit,
+  FaTrash,
+  FaBookOpen,
+  FaPlus,
+  FaSearch,
+} from "react-icons/fa";
 
 function Home() {
   const [books, setBooks] = useState([]);
@@ -171,7 +178,7 @@ function Home() {
   // =====================================================
 
   const filteredBooks = books.filter((book) => {
-    const searchText = search.toLowerCase();
+    const searchText = search.toLowerCase().trim();
 
     return (
       book.title
@@ -191,7 +198,8 @@ function Home() {
   // =====================================================
 
   return (
-    <>
+    <div className="home-page">
+
       {/* =================================================
           NOTIFICATION
       ================================================= */}
@@ -199,6 +207,7 @@ function Home() {
       {notification.message && (
         <div
           className={`notification ${notification.type}`}
+          role="alert"
         >
           <span>{notification.message}</span>
 
@@ -210,6 +219,7 @@ function Home() {
                 type: "",
               })
             }
+            aria-label="Fermer la notification"
           >
             ×
           </button>
@@ -221,14 +231,22 @@ function Home() {
       ================================================= */}
 
       <div
-        className="hero mb-5"
+        className="hero"
         style={{
           backgroundImage: `url(${library})`,
         }}
       >
         <div className="hero-content">
+
+          <div className="mb-3">
+            <FaBookOpen
+              size={38}
+              aria-hidden="true"
+            />
+          </div>
+
           <h1>
-            📚 Découvrez votre prochaine lecture
+            Découvrez votre prochaine lecture
           </h1>
 
           <p className="mt-3">
@@ -247,228 +265,300 @@ function Home() {
                 })
             }
           >
-            📖 Commencer l’exploration
+            <FaBookOpen className="me-2" />
+            Commencer l’exploration
+          </button>
+
+        </div>
+      </div>
+
+      {/* =================================================
+          CONTENU PRINCIPAL
+      ================================================= */}
+
+      <main className="container-fluid px-3 px-md-4">
+
+        {/* =================================================
+            RECHERCHE OPEN LIBRARY
+        ================================================= */}
+
+        <section className="mb-4">
+          <BookSearch
+            onBookAdded={fetchBooks}
+            showNotification={showNotification}
+          />
+        </section>
+
+        {/* =================================================
+            AJOUTER UN LIVRE
+        ================================================= */}
+
+        <div className="text-center my-4">
+          <button
+            className="btn btn-warning btn-lg shadow-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#addBookModal"
+          >
+            <FaPlus className="me-2" />
+            Ajouter un livre
           </button>
         </div>
-      </div>
 
-      {/* =================================================
-          RECHERCHE OPEN LIBRARY
-      ================================================= */}
+        {/* =================================================
+            MODAL AJOUT
+        ================================================= */}
 
-      <BookSearch
-        onBookAdded={fetchBooks}
-        showNotification={showNotification}
-      />
+        <AddBook
+          onBookAdded={fetchBooks}
+          showNotification={showNotification}
+        />
 
-      {/* =================================================
-          BOUTON AJOUTER
-      ================================================= */}
+        <hr className="my-5" />
 
-      <div className="text-center my-4">
-        <button
-          className="btn btn-warning btn-lg"
-          data-bs-toggle="modal"
-          data-bs-target="#addBookModal"
+        {/* =================================================
+            RECHERCHE LOCALE
+        ================================================= */}
+
+        <section className="mb-5">
+
+          <div className="position-relative">
+
+            <FaSearch
+              className="position-absolute top-50 translate-middle-y ms-3 text-muted"
+              aria-hidden="true"
+            />
+
+            <input
+              className="form-control search-box ps-5"
+              type="text"
+              placeholder="Rechercher dans mes livres..."
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              aria-label="Rechercher dans mes livres"
+            />
+
+          </div>
+
+        </section>
+
+        {/* =================================================
+            TITRE BIBLIOTHÈQUE
+        ================================================= */}
+
+        <section
+          id="books-section"
+          className="mb-4"
         >
-          ➕ Ajouter un livre
-        </button>
-      </div>
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
 
-      {/* =================================================
-          MODAL AJOUT
-          Celui-ci reste avec Bootstrap
-      ================================================= */}
+            <div>
+              <h2 className="mb-1">
+                📖 Ma bibliothèque
+              </h2>
 
-      <AddBook
-        onBookAdded={fetchBooks}
-        showNotification={showNotification}
-      />
+              <p className="text-muted mb-0">
+                {filteredBooks.length}{" "}
+                {filteredBooks.length === 1
+                  ? "livre"
+                  : "livres"}{" "}
+                disponible
+                {filteredBooks.length > 1
+                  ? "s"
+                  : ""}
+              </p>
+            </div>
 
-      <hr className="my-5" />
+          </div>
+        </section>
 
-      {/* =================================================
-          RECHERCHE LOCALE
-      ================================================= */}
+        {/* =================================================
+            LIVRES
+        ================================================= */}
 
-      <input
-        className="form-control search-box mb-5"
-        type="text"
-        placeholder="🔍 Rechercher dans mes livres..."
-        value={search}
-        onChange={(e) =>
-          setSearch(e.target.value)
-        }
-      />
+        {filteredBooks.length === 0 ? (
 
-      {/* =================================================
-          TITRE BIBLIOTHÈQUE
-      ================================================= */}
+          <div className="text-center my-5 py-5">
 
-      <div id="books-section">
-        <h2 className="mb-4">
-          📖 Ma bibliothèque
-        </h2>
-      </div>
+            <FaBookOpen
+              size={55}
+              className="text-muted mb-3"
+              aria-hidden="true"
+            />
 
-      {/* =================================================
-          LIVRES
-      ================================================= */}
+            <h4>
+              Aucun livre trouvé
+            </h4>
 
-      {filteredBooks.length === 0 ? (
-        <div className="text-center my-5">
-          <h4>📚 Aucun livre trouvé</h4>
+            <p className="text-muted">
+              Ajoutez un livre ou essayez une autre recherche.
+            </p>
 
-          <p>
-            Ajoutez un livre ou essayez une autre recherche.
-          </p>
-        </div>
-      ) : (
-        <div className="books-grid">
-          {filteredBooks.map((book) => (
-            <div
-              className="book-item"
-              key={book._id}
-            >
-              <div className="book-card">
+            {search && (
+              <button
+                className="btn btn-outline-primary mt-2"
+                onClick={() => setSearch("")}
+              >
+                Réinitialiser la recherche
+              </button>
+            )}
 
-                {/* IMAGE */}
+          </div>
 
-                <img
-                  src={
-                    book.image ||
-                    "https://via.placeholder.com/300x450?text=No+Image"
-                  }
-                  alt={book.title}
-                  className="book-image"
-                  style={{
-                    width: "100%",
-                    height: "600px",
-                    objectFit: "cover",
-                  }}
-                />
+        ) : (
 
-                {/* CONTENU */}
+          <div className="books-grid">
 
-                <div className="card-body">
+            {filteredBooks.map((book) => (
 
-                  {/* TITRE */}
+              <div
+                className="book-item"
+                key={book._id}
+              >
 
-                  <h3 className="card-title">
-                    {book.title}
-                  </h3>
+                <div className="book-card">
 
-                  {/* AUTEUR */}
+                  {/* =================================================
+                      IMAGE
+                  ================================================= */}
 
-                  <p className="card-text">
-                    <strong>
-                      Auteur :
-                    </strong>{" "}
-                    {book.author}
-                  </p>
-
-                  {/* DESCRIPTION */}
-
-                  <p className="card-text book-description">
-                    {book.description ||
-                      "Aucune description disponible."}
-                  </p>
-
-                  {/* GENRE */}
-
-                  <p className="card-text">
-                    <strong>
-                      Genre :
-                    </strong>{" "}
-                    {book.genre ||
-                      "Non classé"}
-                  </p>
-
-                  {/* RATING */}
-
-                  <Rating
-                    book={book}
-                    onRated={fetchBooks}
+                  <img
+                    src={
+                      book.image ||
+                      "https://via.placeholder.com/300x450?text=No+Image"
+                    }
+                    alt={book.title}
+                    className="book-image"
                   />
 
                   {/* =================================================
-                      BOUTONS
+                      CONTENU
                   ================================================= */}
 
-                  <div className="book-actions">
+                  <div className="card-body">
 
-                    {/* DÉTAILS */}
+                    {/* TITRE */}
 
-                    <button
-                      className="btn btn-primary"
-                      onClick={() =>
-                        navigate(
-                          `/books/${book._id}`
-                        )
-                      }
-                    >
-                      📖
-                      <span>Détails</span>
-                    </button>
+                    <h3 className="card-title">
+                      {book.title}
+                    </h3>
 
-                    {/* FAVORI */}
+                    {/* AUTEUR */}
 
-                    <button
-                      className="btn btn-success"
-                      onClick={() =>
-                        addFavorite(book._id)
-                      }
-                    >
-                      <FaHeart />
-                      <span>Favori</span>
-                    </button>
+                    <p className="card-text">
+                      <strong>
+                        Auteur :
+                      </strong>{" "}
+                      {book.author || "Inconnu"}
+                    </p>
+
+                    {/* DESCRIPTION */}
+
+                    <p className="card-text book-description">
+                      {book.description ||
+                        "Aucune description disponible."}
+                    </p>
+
+                    {/* GENRE */}
+
+                    <p className="card-text">
+                      <strong>
+                        Genre :
+                      </strong>{" "}
+                      {book.genre ||
+                        "Non classé"}
+                    </p>
+
+                    {/* RATING */}
+
+                    <Rating
+                      book={book}
+                      onRated={fetchBooks}
+                    />
 
                     {/* =================================================
-                        MODIFIER
-                        IMPORTANT :
-                        Aucun data-bs-toggle ici
+                        BOUTONS
                     ================================================= */}
 
-                    <button
-                      type="button"
-                      className="btn btn-warning"
-                      onClick={() =>
-                        setEditingBook(book)
-                      }
-                    >
-                      <FaEdit />
-                      <span>Modifier</span>
-                    </button>
+                    <div className="book-actions">
 
-                    {/* SUPPRIMER */}
+                      {/* DÉTAILS */}
 
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      onClick={() =>
-                        deleteBook(book._id)
-                      }
-                    >
-                      <FaTrash />
-                      <span>Supprimer</span>
-                    </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() =>
+                          navigate(
+                            `/books/${book._id}`
+                          )
+                        }
+                        title="Voir les détails"
+                      >
+                        <FaBookOpen />
+                        <span>Détails</span>
+                      </button>
+
+                      {/* FAVORI */}
+
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={() =>
+                          addFavorite(book._id)
+                        }
+                        title="Ajouter aux favoris"
+                      >
+                        <FaHeart />
+                        <span>Favori</span>
+                      </button>
+
+                      {/* MODIFIER */}
+
+                      <button
+                        type="button"
+                        className="btn btn-warning"
+                        onClick={() =>
+                          setEditingBook(book)
+                        }
+                        title="Modifier le livre"
+                      >
+                        <FaEdit />
+                        <span>Modifier</span>
+                      </button>
+
+                      {/* SUPPRIMER */}
+
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={() =>
+                          deleteBook(book._id)
+                        }
+                        title="Supprimer le livre"
+                      >
+                        <FaTrash />
+                        <span>Supprimer</span>
+                      </button>
+
+                    </div>
 
                   </div>
 
                 </div>
+
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+
+            ))}
+
+          </div>
+
+        )}
+
+      </main>
 
       {/* =================================================
           FENÊTRE MODIFICATION
-          
-          Elle est en dehors de la boucle map().
-          
-          React l'affiche uniquement lorsqu'un livre
-          est sélectionné.
       ================================================= */}
 
       {editingBook && (
@@ -505,6 +595,7 @@ function Home() {
       ================================================= */}
 
       <footer>
+
         <h3>
           📚 Application de recommandation de livres
         </h3>
@@ -519,8 +610,10 @@ function Home() {
           © 2026 Book Recommendation App —
           Tous droits réservés.
         </p>
+
       </footer>
-    </>
+
+    </div>
   );
 }
 

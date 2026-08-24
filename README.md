@@ -1,57 +1,204 @@
-# Phase  5 – User Interaction and Personalized Recommendations
+# 📚 Book Recommendation App — Phase 6
 
-## Objective
+## 🎯 Objectif de la Phase 6
 
-Enable user interaction and display personalized book recommendations based on user preferences and interactions.
+Cette phase a pour objectif d'améliorer l'expérience utilisateur en permettant aux utilisateurs d'interagir avec les livres et de recevoir des recommandations personnalisées selon leurs préférences et leurs interactions.
 
-## Features Implemented
+---
 
-* Implemented a **Like / Unlike system** that allows authenticated users to like and remove likes from book recommendations.
+## 🚀 Fonctionnalités développées
 
-* Implemented a **Comments system** that allows users to add and view comments on books.
+### 👤 1. Profil utilisateur
 
-* Added a **Book Details page** displaying detailed information about each selected book, including title, author, description, genre, image, rating, and comments.
+Une page de profil a été créée afin de permettre à l'utilisateur de consulter :
 
-* Implemented a **Rating system** allowing authenticated users to rate books from 1 to 5 stars.
+- 👤 Son nom d'utilisateur
+- 📧 Son adresse email
+- ❤️ Ses livres likés
+- 💬 Ses commentaires
+- 👥 Ses followers
+- 👥 Les utilisateurs qu'il suit
+- 📊 Les statistiques de son activité
 
-* Created a **User Profile page** displaying user information, liked books, comments, followers, and following.
+---
 
-* Added **Followers and Following** fields to the User model.
+### ❤️ 2. Interaction avec les livres
 
-* Protected user interactions and sensitive routes using **JWT authentication**.
+L'application permet à l'utilisateur d'interagir avec les livres :
 
-* Implemented a **personalized recommendation algorithm** based on the genres of books liked by the user.
+- ❤️ Ajouter un livre aux favoris
+- 📖 Consulter les détails d'un livre
+- ⭐ Noter un livre
+- ✏️ Modifier un livre
+- 🗑️ Supprimer un livre
+- 📚 Ajouter de nouveaux livres
 
-* Excluded books already liked by the user from personalized recommendations.
+Les actions sont protégées par une authentification JWT.
 
-* Sorted recommendations to prioritize books with higher ratings.
+---
 
-* Created a **Personalized Recommendations Feed** that displays recommended books dynamically for each authenticated user.
+### ✨ 3. Recommandations personnalisées
 
-* Added a **Recommendations page** where users can view their preferred genres and discover suggested books.
+Une page **Recommandations** a été ajoutée.
 
-* Added loading states, error handling, and empty recommendation messages to improve the user experience.
+Elle permet d'afficher :
 
-* Optimized recommendation retrieval by filtering relevant books directly from MongoDB.
+- 📚 Une liste de livres recommandés
+- 🏷️ Les genres préférés de l'utilisateur
+- ⭐ Les notes des livres
+- 👤 L'utilisateur ayant recommandé le livre
+- 📝 Une description du livre
 
-## Technologies Used
+Les recommandations sont basées sur les interactions et les préférences de l'utilisateur.
 
-* React
+---
 
-* React Router DOM
+### 🔍 4. Recherche de livres
 
-* Node.js
+L'utilisateur peut rechercher des livres grâce à l'intégration de l'API **Open Library**.
 
-* Express.js
+La recherche permet d'obtenir :
 
-* MongoDB
+- 📖 Le titre
+- ✍️ L'auteur
+- 🖼️ L'image
+- 🏷️ Le genre
+- 📝 La description
 
-* Mongoose
+L'utilisateur peut ensuite ajouter directement un livre trouvé à sa bibliothèque.
 
-* Axios
+---
 
-* JWT Authentication
+### 📚 5. Bibliothèque personnelle
 
-* Bootstrap
+La page d'accueil affiche les livres enregistrés dans la bibliothèque.
 
-* React Icons
+L'utilisateur peut :
+
+- 🔎 Rechercher un livre dans sa bibliothèque
+- 📖 Consulter ses détails
+- ❤️ L'ajouter aux favoris
+- ✏️ Le modifier
+- 🗑️ Le supprimer
+- ⭐ Le noter
+
+---
+
+### 🔐 6. Authentification
+
+L'application possède un système d'authentification sécurisé avec JWT.
+
+Fonctionnalités :
+
+- 📝 Inscription
+- 🔑 Connexion
+- 🚪 Déconnexion
+- 🔒 Routes protégées
+- 💾 Stockage du token JWT
+- 👤 Gestion de l'utilisateur connecté
+
+---
+
+### 🌙 7. Mode sombre
+
+Un système de changement de thème a été intégré :
+
+- ☀️ Mode clair
+- 🌙 Mode sombre
+
+L'utilisateur peut changer de thème directement depuis la barre de navigation.
+
+---
+
+### 🧭 8. Navigation
+
+La navigation de l'application comprend :
+
+- 🏠 Accueil
+- 👤 Profil
+- ✨ Recommandations
+- ❤️ Favoris
+- 🔐 Connexion
+- 📝 Inscription
+- ℹ️ À propos
+
+La navigation est réalisée avec **React Router**.
+
+---
+
+## 🛠️ Technologies utilisées
+
+### Frontend
+
+- React.js
+- React Router DOM
+- Axios
+- Bootstrap
+- CSS
+- React Icons
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- bcrypt
+- API Open Library
+
+### Outils
+
+- Visual Studio Code
+- Git
+- GitHub
+- MongoDB Atlas
+- MongoDB Compass
+- npm
+
+---
+
+## 📂 Structure du projet
+
+```text
+book-recommendation-app/
+│
+├── client/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   │   ├── AddBook.jsx
+│   │   │   ├── BookSearch.jsx
+│   │   │   ├── EditBook.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── PrivateRoute.jsx
+│   │   │   └── Rating.jsx
+│   │   │
+│   │   ├── context/
+│   │   │   └── ThemeContext.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Profile.jsx
+│   │   │   ├── Favorites.jsx
+│   │   │   ├── BookDetails.jsx
+│   │   │   ├── Recommendations.jsx
+│   │   │   └── About.jsx
+│   │   │
+│   │   └── services/
+│   │       └── api.js
+│   │
+│   └── package.json
+│
+├── server/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── config/
+│   ├── server.js
+│   └── package.json
+│
+└── README.md

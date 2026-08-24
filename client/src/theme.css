@@ -1,13 +1,13 @@
-/* =========================
+/* =========================================
    GOOGLE FONT
-========================= */
+========================================= */
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 
-/* =========================
+/* =========================================
    RESET
-========================= */
+========================================= */
 
 * {
   margin: 0;
@@ -15,11 +15,6 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-
-
-/* =========================
-   HTML / BODY
-========================= */
 
 html,
 body {
@@ -31,46 +26,75 @@ body {
 body {
   background: #f5f7fb;
   color: #222;
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 
-/* =========================
+/* =========================================
    NAVBAR
-========================= */
+========================================= */
 
 .navbar {
-  background: rgba(15, 23, 42, 0.95) !important;
+  background: rgba(15, 23, 42, 0.96) !important;
   backdrop-filter: blur(12px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.18);
+
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .navbar-brand {
   font-size: 1.8rem;
   font-weight: 700;
   letter-spacing: 1px;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.navbar-brand:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .navbar .btn {
   border-radius: 30px;
-  padding: 10px 22px;
-  transition: 0.3s;
+
+  padding: 9px 20px;
+
+  font-weight: 500;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.25s ease;
 }
 
 .navbar .btn:hover {
   transform: translateY(-2px);
+
+  box-shadow:
+    0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 
-/* =========================
+/* =========================================
    HERO
-========================= */
+========================================= */
 
 .hero {
   width: 100%;
   height: 420px;
 
   border-radius: 25px;
+
   overflow: hidden;
 
   margin-bottom: 40px;
@@ -79,6 +103,7 @@ body {
   background-position: center;
 
   display: flex;
+
   justify-content: center;
   align-items: center;
 
@@ -87,6 +112,9 @@ body {
   color: white;
 
   position: relative;
+
+  box-shadow:
+    0 15px 40px rgba(15, 23, 42, 0.15);
 }
 
 .hero::before {
@@ -96,17 +124,32 @@ body {
 
   inset: 0;
 
-  background: rgba(0, 0, 0, 0.55);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(15, 23, 42, 0.75),
+      rgba(15, 23, 42, 0.35)
+    );
 }
 
 .hero-content {
   position: relative;
+
   z-index: 2;
+
+  max-width: 850px;
+
+  padding: 20px;
 }
 
 .hero h1 {
   font-size: 3rem;
+
   font-weight: 700;
+
+  line-height: 1.2;
+
+  margin-bottom: 15px;
 
   animation: fadeDown 0.8s ease;
 }
@@ -114,13 +157,15 @@ body {
 .hero p {
   font-size: 1.2rem;
 
+  line-height: 1.6;
+
   animation: fadeUp 1s ease;
 }
 
 
-/* =========================
+/* =========================================
    SEARCH
-========================= */
+========================================= */
 
 .search-box {
   width: 100%;
@@ -129,31 +174,52 @@ body {
 
   border: none;
 
-  padding: 15px;
+  padding: 15px 20px;
+
+  background: #ffffff;
 
   box-shadow:
     0 5px 15px rgba(0, 0, 0, 0.1);
+
+  outline: none;
+
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.search-box:focus {
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.15);
+
+  transform: translateY(-1px);
 }
 
 .form-control {
   border-radius: 12px;
-  padding: 12px;
+
+  padding: 12px 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .form-control:focus {
   border-color: #ffc107;
 
   box-shadow:
-    0 0 10px rgba(255, 193, 7, 0.3);
+    0 0 0 3px rgba(255, 193, 7, 0.18);
 }
 
 
-/* =========================
+/* =========================================
    BOOKS GRID
-========================= */
+========================================= */
 
 .books-grid {
   width: 100%;
+
   max-width: 1400px;
 
   margin: 0 auto;
@@ -167,26 +233,32 @@ body {
 
   gap: 24px;
 
-  overflow: hidden;
+  overflow: visible;
 }
 
 
-/* =========================
+/* =========================================
    BOOK ITEM
-========================= */
+========================================= */
 
 .book-item {
   width: 100%;
+
   min-width: 0;
+
+  display: flex;
 }
 
 
-/* =========================
+/* =========================================
    BOOK CARD
-========================= */
+========================================= */
 
 .book-card {
   width: 100%;
+
+  min-width: 0;
+
   height: 100%;
 
   background: #ffffff;
@@ -195,30 +267,34 @@ body {
 
   overflow: hidden;
 
-  border: none;
+  border: 1px solid rgba(15, 23, 42, 0.05);
 
   box-shadow:
     0 8px 25px rgba(15, 23, 42, 0.1);
 
   transition:
     transform 0.3s ease,
-    box-shadow 0.3s ease;
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 
   display: flex;
+
   flex-direction: column;
 }
 
 .book-card:hover {
   transform: translateY(-6px);
 
+  border-color: rgba(22, 119, 255, 0.15);
+
   box-shadow:
-    0 15px 35px rgba(15, 23, 42, 0.18);
+    0 18px 40px rgba(15, 23, 42, 0.16);
 }
 
 
-/* =========================
+/* =========================================
    BOOK IMAGE
-========================= */
+========================================= */
 
 .book-image {
   width: 100%;
@@ -227,7 +303,11 @@ body {
 
   object-fit: cover;
 
+  object-position: center;
+
   display: block;
+
+  background: #e9edf3;
 
   transition:
     transform 0.4s ease;
@@ -238,9 +318,9 @@ body {
 }
 
 
-/* =========================
+/* =========================================
    BOOK CONTENT
-========================= */
+========================================= */
 
 .book-card .card-body {
   padding: 18px;
@@ -255,9 +335,9 @@ body {
 }
 
 
-/* =========================
+/* =========================================
    BOOK TITLE
-========================= */
+========================================= */
 
 .book-card .card-title {
   color: #1677ff;
@@ -271,12 +351,20 @@ body {
   margin-bottom: 10px;
 
   word-break: normal;
+
+  overflow-wrap: break-word;
+
+  transition: color 0.2s ease;
+}
+
+.book-card:hover .card-title {
+  color: #0d5ed7;
 }
 
 
-/* =========================
+/* =========================================
    BOOK TEXT
-========================= */
+========================================= */
 
 .book-card .card-text {
   color: #555;
@@ -284,23 +372,33 @@ body {
   line-height: 1.5;
 
   margin-bottom: 8px;
+
+  overflow-wrap: break-word;
 }
 
 
-/* =========================
+/* =========================================
    DESCRIPTION
-========================= */
+========================================= */
 
 .book-description {
   min-height: 40px;
 
+  max-height: 72px;
+
   overflow: hidden;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 3;
+
+  -webkit-box-orient: vertical;
 }
 
 
-/* =========================
-   BOOK BUTTONS
-========================= */
+/* =========================================
+   BOOK ACTIONS
+========================================= */
 
 .book-actions {
   width: 100%;
@@ -320,16 +418,16 @@ body {
 }
 
 
-/* =========================
-   BUTTON
-========================= */
+/* =========================================
+   BOOK BUTTONS
+========================================= */
 
 .book-actions .btn {
   width: 100%;
 
   min-width: 0;
 
-  height: 40px;
+  min-height: 40px;
 
   padding: 6px 8px;
 
@@ -353,62 +451,94 @@ body {
 
   overflow: hidden;
 
+  text-overflow: ellipsis;
+
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .book-actions .btn:hover {
   transform: translateY(-2px);
 
   box-shadow:
-    0 4px 10px rgba(0, 0, 0, 0.15);
+    0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.book-actions .btn:active {
+  transform: translateY(0);
 }
 
 
-/* =========================
+/* =========================================
    GENERAL BUTTONS
-========================= */
+========================================= */
 
 button {
-  transition: 0.3s;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(22, 119, 255, 0.25);
+
+  outline-offset: 2px;
 }
 
 
-/* =========================
+/* =========================================
    FORM CARD
-========================= */
+========================================= */
 
 .card {
   border-radius: 20px;
+
+  border: none;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.08);
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 
-/* =========================
+/* =========================================
    DASHBOARD
-========================= */
+========================================= */
 
 .stats-card {
   border: none;
 
   border-radius: 20px;
 
-  transition: 0.3s;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .stats-card:hover {
   transform: translateY(-8px);
+
+  box-shadow:
+    0 15px 30px rgba(15, 23, 42, 0.12);
 }
 
 
-/* =========================
+/* =========================================
    FOOTER
-========================= */
+========================================= */
 
 footer {
   margin-top: 60px;
 
-  padding: 25px;
+  padding: 30px 25px;
 
   background: #0f172a;
 
@@ -427,12 +557,14 @@ footer hr {
 
 footer h3 {
   color: #ffc107;
+
+  font-weight: 600;
 }
 
 
-/* =========================
+/* =========================================
    ANIMATIONS
-========================= */
+========================================= */
 
 @keyframes fadeDown {
   from {
@@ -467,28 +599,29 @@ footer h3 {
 }
 
 
-/* =========================
+/* =========================================
    DARK MODE
-========================= */
+========================================= */
 
 body.dark {
   background: #121212;
 
-  color: white;
+  color: #ffffff;
 }
 
 body.dark h1,
 body.dark h2,
 body.dark h3,
 body.dark h4,
-body.dark h5 {
-  color: white;
+body.dark h5,
+body.dark h6 {
+  color: #ffffff;
 }
 
 
-/* =========================
+/* =========================================
    DARK CARDS
-========================= */
+========================================= */
 
 body.dark .card,
 body.dark .book-card {
@@ -496,6 +629,9 @@ body.dark .book-card {
     #1e1e1e !important;
 
   color: white !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.06);
 }
 
 body.dark .card-title,
@@ -508,50 +644,86 @@ body.dark .card small {
   color: #bbb !important;
 }
 
+body.dark .book-card {
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35);
+}
 
-/* =========================
+body.dark .book-card:hover {
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+
+/* =========================================
    DARK INPUTS
-========================= */
+========================================= */
 
 body.dark input,
-body.dark textarea {
+body.dark textarea,
+body.dark select,
+body.dark .form-control {
   background-color: #333;
 
   color: white;
 
-  border:
-    1px solid #555;
+  border-color: #555;
 }
 
-body.dark input::placeholder {
+body.dark input::placeholder,
+body.dark textarea::placeholder {
   color: #aaa;
 }
 
+body.dark .form-control:focus {
+  border-color: #ffc107;
 
-/* =========================
+  box-shadow:
+    0 0 0 3px rgba(255, 193, 7, 0.15);
+}
+
+
+/* =========================================
+   DARK SEARCH
+========================================= */
+
+body.dark .search-box {
+  background: #1e1e1e;
+
+  color: white;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================
    DARK BOOK TITLE
-========================= */
+========================================= */
 
 body.dark .book-card .card-title {
   color: #60a5fa !important;
 }
 
+body.dark .book-card:hover .card-title {
+  color: #93c5fd !important;
+}
 
-/* =========================
+
+/* =========================================
    DARK BUTTONS
-========================= */
+========================================= */
 
 body.dark .book-actions .btn {
   color: white;
 }
 
 
-/* =========================
+/* =========================================
    TABLET
-========================= */
+========================================= */
 
 @media (max-width: 992px) {
-
   .books-grid {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
@@ -559,19 +731,31 @@ body.dark .book-actions .btn {
     gap: 20px;
   }
 
+  .hero {
+    height: 380px;
+  }
+
+  .hero h1 {
+    font-size: 2.6rem;
+  }
 }
 
 
-/* =========================
+/* =========================================
    MOBILE
-========================= */
+========================================= */
 
 @media (max-width: 576px) {
-
   .hero {
     height: 350px;
 
     border-radius: 18px;
+
+    margin-bottom: 30px;
+  }
+
+  .hero-content {
+    padding: 16px;
   }
 
   .hero h1 {
@@ -608,4 +792,49 @@ body.dark .book-actions .btn {
     width: 100%;
   }
 
+  .navbar-brand {
+    font-size: 1.5rem;
+  }
+
+  footer {
+    margin-top: 40px;
+
+    padding: 25px 15px;
+
+    border-radius:
+      16px 16px 0 0;
+  }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 400px) {
+  .hero {
+    height: 310px;
+  }
+
+  .hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+  }
+
+  .book-image {
+    height: 220px;
+  }
+
+  .book-card .card-body {
+    padding: 14px;
+  }
+
+  .book-actions .btn {
+    font-size: 12px;
+
+    min-height: 38px;
+  }
 }

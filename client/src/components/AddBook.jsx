@@ -1,5 +1,15 @@
 import { useState } from "react";
 import api from "../services/api";
+import {
+  FaBook,
+  FaUser,
+  FaTag,
+  FaStar,
+  FaImage,
+  FaAlignLeft,
+  FaSpinner,
+  FaPlus,
+} from "react-icons/fa";
 
 function AddBook({ onBookAdded, showNotification }) {
   const [book, setBook] = useState({
@@ -13,6 +23,10 @@ function AddBook({ onBookAdded, showNotification }) {
 
   const [loading, setLoading] = useState(false);
 
+  // =====================================================
+  // MODIFIER LE FORMULAIRE
+  // =====================================================
+
   const handleChange = (e) => {
     setBook({
       ...book,
@@ -20,12 +34,16 @@ function AddBook({ onBookAdded, showNotification }) {
     });
   };
 
+  // =====================================================
+  // ENVOYER LE FORMULAIRE
+  // =====================================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // =============================
+    // =====================================================
     // VALIDATION DU TITRE
-    // =============================
+    // =====================================================
 
     if (!book.title.trim()) {
       showNotification(
@@ -35,9 +53,9 @@ function AddBook({ onBookAdded, showNotification }) {
       return;
     }
 
-    // =============================
+    // =====================================================
     // VALIDATION DE L'AUTEUR
-    // =============================
+    // =====================================================
 
     if (!book.author.trim()) {
       showNotification(
@@ -47,10 +65,9 @@ function AddBook({ onBookAdded, showNotification }) {
       return;
     }
 
-    // =============================
+    // =====================================================
     // VALIDATION DU RATING
-    // Rating facultatif
-    // =============================
+    // =====================================================
 
     let rating = 0;
 
@@ -88,18 +105,18 @@ function AddBook({ onBookAdded, showNotification }) {
         }
       );
 
-      // =============================
+      // =====================================================
       // SUCCÈS
-      // =============================
+      // =====================================================
 
       showNotification(
         "📚 Livre ajouté avec succès !",
         "success"
       );
 
-      // =============================
-      // RESET FORMULAIRE
-      // =============================
+      // =====================================================
+      // RESET
+      // =====================================================
 
       setBook({
         title: "",
@@ -110,17 +127,17 @@ function AddBook({ onBookAdded, showNotification }) {
         rating: "",
       });
 
-      // =============================
+      // =====================================================
       // ACTUALISER LA LISTE
-      // =============================
+      // =====================================================
 
       if (onBookAdded) {
         onBookAdded();
       }
 
-      // =============================
-      // FERMER MODAL
-      // =============================
+      // =====================================================
+      // FERMER LA MODALE
+      // =====================================================
 
       document
         .querySelector("#addBookModal .btn-close")
@@ -129,7 +146,8 @@ function AddBook({ onBookAdded, showNotification }) {
     } catch (error) {
       console.error(
         "Erreur lors de l'ajout :",
-        error.response?.data || error.message
+        error.response?.data ||
+          error.message
       );
 
       showNotification(
@@ -150,16 +168,33 @@ function AddBook({ onBookAdded, showNotification }) {
       tabIndex="-1"
       aria-hidden="true"
     >
-      <div className="modal-dialog modal-lg">
-        <div className="modal-content rounded-4">
+      <div className="modal-dialog modal-lg modal-dialog-centered">
 
-          {/* HEADER */}
+        <div className="modal-content add-book-modal">
 
-          <div className="modal-header">
+          {/* =================================================
+              HEADER
+          ================================================= */}
 
-            <h3 className="modal-title">
-              📚 Ajouter un livre
-            </h3>
+          <div className="modal-header add-book-header">
+
+            <div className="d-flex align-items-center gap-3">
+
+              <div className="add-book-icon">
+                <FaBook />
+              </div>
+
+              <div>
+                <h3 className="modal-title mb-1">
+                  Ajouter un livre
+                </h3>
+
+                <p className="mb-0">
+                  Ajoutez un nouveau livre à votre bibliothèque
+                </p>
+              </div>
+
+            </div>
 
             <button
               type="button"
@@ -170,94 +205,200 @@ function AddBook({ onBookAdded, showNotification }) {
 
           </div>
 
-          {/* BODY */}
+          {/* =================================================
+              BODY
+          ================================================= */}
 
-          <div className="modal-body">
+          <div className="modal-body add-book-body">
 
             <form onSubmit={handleSubmit}>
 
-              {/* TITRE */}
+              {/* =================================================
+                  TITRE
+              ================================================= */}
 
-              <input
-                className="form-control form-control-lg mb-3"
-                name="title"
-                placeholder="📖 Titre"
-                value={book.title}
-                onChange={handleChange}
-                required
-              />
+              <div className="add-book-field">
 
-              {/* AUTEUR */}
+                <label htmlFor="book-title">
+                  <FaBook />
+                  Titre du livre
+                </label>
 
-              <input
-                className="form-control form-control-lg mb-3"
-                name="author"
-                placeholder="✍️ Auteur"
-                value={book.author}
-                onChange={handleChange}
-                required
-              />
+                <div className="add-book-input">
 
-              {/* GENRE */}
+                  <input
+                    id="book-title"
+                    type="text"
+                    className="form-control"
+                    name="title"
+                    placeholder="Ex : Harry Potter"
+                    value={book.title}
+                    onChange={handleChange}
+                    required
+                  />
 
-              <input
-                className="form-control form-control-lg mb-3"
-                name="genre"
-                placeholder="🏷️ Genre"
-                value={book.genre}
-                onChange={handleChange}
-              />
+                </div>
 
-              {/* RATING */}
+              </div>
 
-              <input
-                type="number"
-                className="form-control form-control-lg mb-3"
-                name="rating"
-                placeholder="⭐ Note (facultative, 1 à 5)"
-                value={book.rating}
-                onChange={handleChange}
-                min="1"
-                max="5"
-                step="0.1"
-              />
+              {/* =================================================
+                  AUTEUR
+              ================================================= */}
 
-              <small className="text-muted d-block mb-3">
+              <div className="add-book-field">
+
+                <label htmlFor="book-author">
+                  <FaUser />
+                  Auteur
+                </label>
+
+                <input
+                  id="book-author"
+                  type="text"
+                  className="form-control"
+                  name="author"
+                  placeholder="Ex : J.K. Rowling"
+                  value={book.author}
+                  onChange={handleChange}
+                  required
+                />
+
+              </div>
+
+              {/* =================================================
+                  GENRE + NOTE
+              ================================================= */}
+
+              <div className="row">
+
+                <div className="col-md-6">
+
+                  <div className="add-book-field">
+
+                    <label htmlFor="book-genre">
+                      <FaTag />
+                      Genre
+                    </label>
+
+                    <input
+                      id="book-genre"
+                      type="text"
+                      className="form-control"
+                      name="genre"
+                      placeholder="Ex : Fantastique"
+                      value={book.genre}
+                      onChange={handleChange}
+                    />
+
+                  </div>
+
+                </div>
+
+                <div className="col-md-6">
+
+                  <div className="add-book-field">
+
+                    <label htmlFor="book-rating">
+                      <FaStar />
+                      Note
+                    </label>
+
+                    <input
+                      id="book-rating"
+                      type="number"
+                      className="form-control"
+                      name="rating"
+                      placeholder="Entre 1 et 5"
+                      value={book.rating}
+                      onChange={handleChange}
+                      min="1"
+                      max="5"
+                      step="0.1"
+                    />
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <small className="add-book-help">
                 ⭐ La note est facultative. Vous pourrez
                 noter le livre plus tard.
               </small>
 
-              {/* IMAGE */}
+              {/* =================================================
+                  IMAGE
+              ================================================= */}
 
-              <input
-                className="form-control form-control-lg mb-3"
-                name="image"
-                placeholder="🖼️ URL de l'image"
-                value={book.image}
-                onChange={handleChange}
-              />
+              <div className="add-book-field">
 
-              {/* DESCRIPTION */}
+                <label htmlFor="book-image">
+                  <FaImage />
+                  Image du livre
+                </label>
 
-              <textarea
-                className="form-control mb-4"
-                rows="4"
-                name="description"
-                placeholder="📝 Description"
-                value={book.description}
-                onChange={handleChange}
-              />
+                <input
+                  id="book-image"
+                  type="url"
+                  className="form-control"
+                  name="image"
+                  placeholder="https://exemple.com/image.jpg"
+                  value={book.image}
+                  onChange={handleChange}
+                />
 
-              {/* BOUTON */}
+                <small className="text-muted">
+                  Ajoutez l'URL de la couverture du livre.
+                </small>
+
+              </div>
+
+              {/* =================================================
+                  DESCRIPTION
+              ================================================= */}
+
+              <div className="add-book-field">
+
+                <label htmlFor="book-description">
+                  <FaAlignLeft />
+                  Description
+                </label>
+
+                <textarea
+                  id="book-description"
+                  className="form-control"
+                  rows="5"
+                  name="description"
+                  placeholder="Décrivez brièvement le livre..."
+                  value={book.description}
+                  onChange={handleChange}
+                />
+
+              </div>
+
+              {/* =================================================
+                  BOUTON
+              ================================================= */}
 
               <button
-                className="btn btn-warning btn-lg w-100"
+                className="btn btn-warning btn-lg w-100 add-book-submit"
                 type="submit"
                 disabled={loading}
               >
-                {loading
-                  ? "Ajout en cours..."
-                  : "📚 Ajouter le livre"}
+
+                {loading ? (
+                  <>
+                    <FaSpinner className="spinner-icon me-2" />
+                    Ajout en cours...
+                  </>
+                ) : (
+                  <>
+                    <FaPlus className="me-2" />
+                    Ajouter le livre
+                  </>
+                )}
+
               </button>
 
             </form>
