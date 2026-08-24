@@ -11,38 +11,51 @@ exports.createBook = async (req, res) => {
       description,
       image,
       genre,
-      rating
+      rating,
     } = req.body;
 
     // Validation du titre
     if (!title || !title.trim()) {
       return res.status(400).json({
-        message: "Le titre du livre est obligatoire"
+        message: "Le titre du livre est obligatoire",
       });
     }
 
     // Validation de l'auteur
     if (!author || !author.trim()) {
       return res.status(400).json({
-        message: "L'auteur est obligatoire"
+        message: "L'auteur est obligatoire",
       });
     }
 
-    // Validation du rating
-    const bookRating = Number(rating);
+    // =============================
+    // VALIDATION DU RATING
+    // Le rating est facultatif
+    // =============================
+
+    let bookRating = 0;
 
     if (
-      rating === undefined ||
-      rating === null ||
-      rating === "" ||
-      isNaN(bookRating) ||
-      bookRating < 1 ||
-      bookRating > 5
+      rating !== undefined &&
+      rating !== null &&
+      rating !== ""
     ) {
-      return res.status(400).json({
-        message: "La note doit être comprise entre 1 et 5"
-      });
+      bookRating = Number(rating);
+
+      if (
+        isNaN(bookRating) ||
+        bookRating < 1 ||
+        bookRating > 5
+      ) {
+        return res.status(400).json({
+          message: "La note doit être comprise entre 1 et 5",
+        });
+      }
     }
+
+    // =============================
+    // CRÉER LE LIVRE
+    // =============================
 
     const book = await Book.create({
       title: title.trim(),
@@ -51,19 +64,20 @@ exports.createBook = async (req, res) => {
       image: image || "",
       genre: genre || "",
       rating: bookRating,
-      recommendedBy: req.user.id
+      recommendedBy: req.user.id,
+      likes: [],
     });
 
     res.status(201).json({
       message: "Book added successfully",
-      book
+      book,
     });
 
   } catch (error) {
     console.error("Erreur ajout livre :", error);
 
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -74,9 +88,8 @@ exports.createBook = async (req, res) => {
 // =============================
 exports.getBooks = async (req, res) => {
   try {
-
     const books = await Book.find({
-      recommendedBy: req.user.id
+      recommendedBy: req.user.id,
     }).populate(
       "recommendedBy",
       "username email"
@@ -85,14 +98,13 @@ exports.getBooks = async (req, res) => {
     res.json(books);
 
   } catch (error) {
-
     console.error(
       "Erreur récupération livres :",
       error
     );
 
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -103,32 +115,29 @@ exports.getBooks = async (req, res) => {
 // =============================
 exports.getBookById = async (req, res) => {
   try {
-
-    const book = await Book.findOne({
-      _id: req.params.id,
-      recommendedBy: req.user.id
-    }).populate(
+    const book = await Book.findById(
+      req.params.id
+    ).populate(
       "recommendedBy",
       "username email"
     );
 
     if (!book) {
       return res.status(404).json({
-        message: "Livre introuvable"
+        message: "Livre introuvable",
       });
     }
 
     res.json(book);
 
   } catch (error) {
-
     console.error(
       "Erreur récupération livre :",
       error
     );
 
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -139,39 +148,38 @@ exports.getBookById = async (req, res) => {
 // =============================
 exports.updateBook = async (req, res) => {
   try {
-
     const book = await Book.findOneAndUpdate(
       {
         _id: req.params.id,
-        recommendedBy: req.user.id
+        recommendedBy: req.user.id,
       },
       req.body,
       {
         new: true,
-        runValidators: true
+        runValidators: true,
       }
     );
 
     if (!book) {
       return res.status(404).json({
-        message: "Livre introuvable ou non autorisé"
+        message:
+          "Livre introuvable ou non autorisé",
       });
     }
 
     res.json({
       message: "Book updated successfully",
-      book
+      book,
     });
 
   } catch (error) {
-
     console.error(
       "Erreur modification livre :",
       error
     );
 
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -182,31 +190,30 @@ exports.updateBook = async (req, res) => {
 // =============================
 exports.deleteBook = async (req, res) => {
   try {
-
     const book = await Book.findOneAndDelete({
       _id: req.params.id,
-      recommendedBy: req.user.id
+      recommendedBy: req.user.id,
     });
 
     if (!book) {
       return res.status(404).json({
-        message: "Livre introuvable ou non autorisé"
+        message:
+          "Livre introuvable ou non autorisé",
       });
     }
 
     res.json({
-      message: "Book deleted successfully"
+      message: "Book deleted successfully",
     });
 
   } catch (error) {
-
     console.error(
       "Erreur suppression livre :",
       error
     );
 
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -217,11 +224,11 @@ exports.deleteBook = async (req, res) => {
 // =============================
 exports.rateBook = async (req, res) => {
   try {
-
     const { rating } = req.body;
 
     const bookRating = Number(rating);
 
+    // Ici, la note est obligatoire
     if (
       rating === undefined ||
       rating === null ||
@@ -231,18 +238,18 @@ exports.rateBook = async (req, res) => {
       bookRating > 5
     ) {
       return res.status(400).json({
-        message: "La note doit être comprise entre 1 et 5"
+        message:
+          "La note doit être comprise entre 1 et 5",
       });
     }
 
-    const book = await Book.findOne({
-      _id: req.params.id,
-      recommendedBy: req.user.id
-    });
+    const book = await Book.findById(
+      req.params.id
+    );
 
     if (!book) {
       return res.status(404).json({
-        message: "Livre introuvable ou non autorisé"
+        message: "Livre introuvable",
       });
     }
 
@@ -252,18 +259,78 @@ exports.rateBook = async (req, res) => {
 
     res.json({
       message: "⭐ Note ajoutée avec succès !",
-      book
+      book,
     });
 
   } catch (error) {
-
     console.error(
       "Erreur notation :",
       error
     );
 
     res.status(500).json({
-      message: error.message
+      message: error.message,
+    });
+  }
+};
+
+
+// =============================
+// ❤️ LIKE / UNLIKE UN LIVRE
+// =============================
+exports.likeBook = async (req, res) => {
+  try {
+    const book = await Book.findById(
+      req.params.id
+    );
+
+    if (!book) {
+      return res.status(404).json({
+        message: "Livre introuvable",
+      });
+    }
+
+    const userId = req.user.id;
+
+    // Vérifier si l'utilisateur a déjà liké
+    const alreadyLiked = book.likes.some(
+      (id) =>
+        id.toString() === userId.toString()
+    );
+
+    if (alreadyLiked) {
+      // Retirer le like
+      book.likes = book.likes.filter(
+        (id) =>
+          id.toString() !== userId.toString()
+      );
+    } else {
+      // Ajouter le like
+      book.likes.push(userId);
+    }
+
+    await book.save();
+
+    res.status(200).json({
+      message: alreadyLiked
+        ? "Like supprimé"
+        : "Livre aimé ❤️",
+
+      liked: !alreadyLiked,
+
+      likes: book.likes,
+
+      likesCount: book.likes.length,
+    });
+
+  } catch (error) {
+    console.error(
+      "Erreur Like :",
+      error
+    );
+
+    res.status(500).json({
+      message: error.message,
     });
   }
 };

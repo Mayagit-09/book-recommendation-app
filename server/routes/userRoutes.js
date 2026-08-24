@@ -1,29 +1,46 @@
 const express = require("express");
+
 const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
 
 const {
-  register,
-  login
-} = require("../controllers/authController");
+  getProfile,
+  followUser,
+  unfollowUser,
+} = require("../controllers/userController");
 
+// ========================================
+// 👤 MON PROFIL
+// GET /api/users/profile
+// ========================================
 
-// Register
-router.post("/register", register);
+router.get(
+  "/profile",
+  authMiddleware,
+  getProfile
+);
 
+// ========================================
+// 👥 SUIVRE
+// POST /api/users/:id/follow
+// ========================================
 
-// Login
-router.post("/login", login);
+router.post(
+  "/:id/follow",
+  authMiddleware,
+  followUser
+);
 
+// ========================================
+// 👥 NE PLUS SUIVRE
+// DELETE /api/users/:id/follow
+// ========================================
 
-// Protected profile
-router.get("/profile", authMiddleware, (req, res) => {
-  res.json({
-    message: "Protected profile route",
-    user: req.user
-  });
-});
-
+router.delete(
+  "/:id/follow",
+  authMiddleware,
+  unfollowUser
+);
 
 module.exports = router;

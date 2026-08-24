@@ -1,47 +1,53 @@
 const mongoose = require("mongoose");
 
-
 const UserSchema = new mongoose.Schema(
   {
-
     username: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
-
 
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
-      trim: true
+      trim: true,
     },
-
 
     password: {
       type: String,
-      required: true
+      required: true,
     },
 
-
+    // ❤️ Livres favoris
     favorites: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Book"
-      }
-    ]
+        ref: "Book",
+      },
+    ],
 
+    // 👥 Abonnés
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    // 👥 Utilisateurs suivis
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-
-
-module.exports = mongoose.model(
-  "User",
-  UserSchema
-);
+module.exports = mongoose.model("User", UserSchema);

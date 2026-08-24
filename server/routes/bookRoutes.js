@@ -9,7 +9,8 @@ const {
   getBookById,
   updateBook,
   deleteBook,
-  rateBook
+  rateBook,
+  likeBook
 } = require("../controllers/bookController");
 
 
@@ -31,5 +32,7 @@ router.delete("/:id", authMiddleware, deleteBook);
 // Noter
 router.put("/:id/rating", authMiddleware, rateBook);
 
+// ❤️ POST - Like / Unlike
+router.post("/:id/like", authMiddleware, likeBook);
 
 module.exports = router;

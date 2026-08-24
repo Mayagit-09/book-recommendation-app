@@ -12,6 +12,8 @@ import Register from "./pages/Register";
 import Favorites from "./pages/Favorites";
 import About from "./pages/About";
 import BookDetails from "./pages/BookDetails";
+import Profile from "./pages/Profile";
+import Recommendations from "./pages/Recommendations";
 
 function App() {
   return (
@@ -76,6 +78,15 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={<Profile />}
+          />
+
+          <Route
+          path="/recommendations"
+          element={<Recommendations />}
+          />
 
         {/* ========================= */}
         {/* ABOUT */}

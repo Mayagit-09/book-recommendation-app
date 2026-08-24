@@ -14,17 +14,24 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // =====================
+  // CHANGEMENT DES CHAMPS
+  // =====================
+
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value
     });
 
-    // Effacer le message d'erreur lorsque l'utilisateur recommence à écrire
     if (errorMessage) {
       setErrorMessage("");
     }
   };
+
+  // =====================
+  // CONNEXION
+  // =====================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,23 +40,42 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await api.post("/users/login", form);
+      // ✅ CORRECTION : /auth/login
+      const res = await api.post(
+        "/auth/login",
+        form
+      );
 
-      // Enregistrer le token JWT
-      localStorage.setItem("token", res.data.token);
+      console.log("✅ Connexion réussie :", res.data);
 
-      // Enregistrer les informations de l'utilisateur
+      // =====================
+      // ENREGISTRER LE TOKEN
+      // =====================
+
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
+
+      // =====================
+      // ENREGISTRER L'UTILISATEUR
+      // =====================
+
       localStorage.setItem(
         "user",
         JSON.stringify(res.data.user)
       );
 
-      // Redirection vers l'accueil
+      // =====================
+      // REDIRECTION
+      // =====================
+
       navigate("/");
 
     } catch (error) {
+
       console.error(
-        "Erreur login :",
+        "❌ Erreur login :",
         error.response?.data || error.message
       );
 
@@ -68,31 +94,45 @@ function Login() {
 
       <div className="login-card">
 
-        {/* Icône */}
+        {/* ICÔNE */}
+
         <div className="login-icon">
           📚
         </div>
 
-        {/* Titre */}
-        <h2>Connexion</h2>
+        {/* TITRE */}
+
+        <h2>
+          Connexion
+        </h2>
 
         <p className="login-subtitle">
-          Bienvenue sur l'application de recommandation de livres
+          Bienvenue sur l'application de
+          recommandation de livres
         </p>
 
-        {/* Message d'erreur */}
+        {/* MESSAGE D'ERREUR */}
+
         {errorMessage && (
           <div className="login-error">
+
             <span>⚠️</span>
-            <span>{errorMessage}</span>
+
+            <span>
+              {errorMessage}
+            </span>
+
           </div>
         )}
 
-        {/* Formulaire */}
+        {/* FORMULAIRE */}
+
         <form onSubmit={handleSubmit}>
 
-          {/* Email */}
+          {/* EMAIL */}
+
           <div className="input-group">
+
             <label htmlFor="email">
               Email
             </label>
@@ -106,10 +146,13 @@ function Login() {
               onChange={handleChange}
               required
             />
+
           </div>
 
-          {/* Mot de passe */}
+          {/* MOT DE PASSE */}
+
           <div className="input-group">
+
             <label htmlFor="password">
               Mot de passe
             </label>
@@ -123,20 +166,27 @@ function Login() {
               onChange={handleChange}
               required
             />
+
           </div>
 
-          {/* Bouton connexion */}
+          {/* BOUTON */}
+
           <button
             type="submit"
             className="login-button"
             disabled={loading}
           >
-            {loading ? "Connexion..." : "Se connecter"}
+
+            {loading
+              ? "Connexion..."
+              : "Se connecter"}
+
           </button>
 
         </form>
 
-        {/* Inscription */}
+        {/* INSCRIPTION */}
+
         <p className="register-text">
           Vous n'avez pas encore de compte ?
         </p>

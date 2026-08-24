@@ -23,7 +23,10 @@ function AddBook({ onBookAdded, showNotification }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation du titre
+    // =============================
+    // VALIDATION DU TITRE
+    // =============================
+
     if (!book.title.trim()) {
       showNotification(
         "📖 Veuillez saisir le titre du livre.",
@@ -32,7 +35,10 @@ function AddBook({ onBookAdded, showNotification }) {
       return;
     }
 
-    // Validation de l'auteur
+    // =============================
+    // VALIDATION DE L'AUTEUR
+    // =============================
+
     if (!book.author.trim()) {
       showNotification(
         "✍️ Veuillez saisir le nom de l'auteur.",
@@ -41,15 +47,27 @@ function AddBook({ onBookAdded, showNotification }) {
       return;
     }
 
-    // Validation du rating
-    const rating = Number(book.rating);
+    // =============================
+    // VALIDATION DU RATING
+    // Rating facultatif
+    // =============================
 
-    if (!book.rating || rating < 1 || rating > 5) {
-      showNotification(
-        "⭐ La note doit être comprise entre 1 et 5.",
-        "error"
-      );
-      return;
+    let rating = 0;
+
+    if (book.rating !== "") {
+      rating = Number(book.rating);
+
+      if (
+        isNaN(rating) ||
+        rating < 0 ||
+        rating > 5
+      ) {
+        showNotification(
+          "⭐ La note doit être comprise entre 0 et 5.",
+          "error"
+        );
+        return;
+      }
     }
 
     setLoading(true);
@@ -70,12 +88,19 @@ function AddBook({ onBookAdded, showNotification }) {
         }
       );
 
+      // =============================
+      // SUCCÈS
+      // =============================
+
       showNotification(
         "📚 Livre ajouté avec succès !",
         "success"
       );
 
-      // Réinitialiser le formulaire
+      // =============================
+      // RESET FORMULAIRE
+      // =============================
+
       setBook({
         title: "",
         author: "",
@@ -85,12 +110,18 @@ function AddBook({ onBookAdded, showNotification }) {
         rating: "",
       });
 
-      // Actualiser la liste des livres
+      // =============================
+      // ACTUALISER LA LISTE
+      // =============================
+
       if (onBookAdded) {
         onBookAdded();
       }
 
-      // Fermer la fenêtre
+      // =============================
+      // FERMER MODAL
+      // =============================
+
       document
         .querySelector("#addBookModal .btn-close")
         ?.click();
@@ -123,6 +154,7 @@ function AddBook({ onBookAdded, showNotification }) {
         <div className="modal-content rounded-4">
 
           {/* HEADER */}
+
           <div className="modal-header">
 
             <h3 className="modal-title">
@@ -139,11 +171,13 @@ function AddBook({ onBookAdded, showNotification }) {
           </div>
 
           {/* BODY */}
+
           <div className="modal-body">
 
             <form onSubmit={handleSubmit}>
 
               {/* TITRE */}
+
               <input
                 className="form-control form-control-lg mb-3"
                 name="title"
@@ -154,6 +188,7 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* AUTEUR */}
+
               <input
                 className="form-control form-control-lg mb-3"
                 name="author"
@@ -164,6 +199,7 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* GENRE */}
+
               <input
                 className="form-control form-control-lg mb-3"
                 name="genre"
@@ -173,20 +209,26 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* RATING */}
+
               <input
                 type="number"
                 className="form-control form-control-lg mb-3"
                 name="rating"
-                placeholder="⭐ Note (1 à 5)"
+                placeholder="⭐ Note (facultative, 1 à 5)"
                 value={book.rating}
                 onChange={handleChange}
                 min="1"
                 max="5"
                 step="0.1"
-                required
               />
 
+              <small className="text-muted d-block mb-3">
+                ⭐ La note est facultative. Vous pourrez
+                noter le livre plus tard.
+              </small>
+
               {/* IMAGE */}
+
               <input
                 className="form-control form-control-lg mb-3"
                 name="image"
@@ -196,6 +238,7 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* DESCRIPTION */}
+
               <textarea
                 className="form-control mb-4"
                 rows="4"
@@ -206,6 +249,7 @@ function AddBook({ onBookAdded, showNotification }) {
               />
 
               {/* BOUTON */}
+
               <button
                 className="btn btn-warning btn-lg w-100"
                 type="submit"

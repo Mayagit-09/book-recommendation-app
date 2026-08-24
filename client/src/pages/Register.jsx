@@ -14,17 +14,24 @@ function Register() {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // =====================
+  // CHANGEMENT DES CHAMPS
+  // =====================
+
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
 
-    // Effacer le message d'erreur lorsque l'utilisateur écrit
     if (errorMessage) {
       setErrorMessage("");
     }
   };
+
+  // =====================
+  // INSCRIPTION
+  // =====================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,14 +40,24 @@ function Register() {
     setLoading(true);
 
     try {
-      await api.post("/users/register", form);
+      // ✅ CORRECTION
+      const res = await api.post(
+        "/auth/register",
+        form
+      );
 
-      // Redirection vers Login après inscription
+      console.log(
+        "✅ Inscription réussie :",
+        res.data
+      );
+
+      // Redirection vers Login
       navigate("/login");
 
     } catch (err) {
+
       console.error(
-        "Erreur inscription :",
+        "❌ Erreur inscription :",
         err.response?.data || err.message
       );
 
@@ -59,28 +76,44 @@ function Register() {
 
       <div className="auth-card">
 
+        {/* ICÔNE */}
+
         <div className="register-icon">
           📚
         </div>
 
-        <h2>Créer un compte</h2>
+        {/* TITRE */}
+
+        <h2>
+          Créer un compte
+        </h2>
 
         <p className="auth-subtitle">
           Rejoignez notre communauté de lecteurs
         </p>
 
-        {/* Message d'erreur */}
+        {/* MESSAGE D'ERREUR */}
+
         {errorMessage && (
           <div className="register-error">
+
             <span>⚠️</span>
-            <span>{errorMessage}</span>
+
+            <span>
+              {errorMessage}
+            </span>
+
           </div>
         )}
 
+        {/* FORMULAIRE */}
+
         <form onSubmit={handleSubmit}>
 
-          {/* Nom d'utilisateur */}
+          {/* NOM */}
+
           <div className="form-group">
+
             <label htmlFor="username">
               Nom d'utilisateur
             </label>
@@ -95,10 +128,13 @@ function Register() {
               autoComplete="username"
               required
             />
+
           </div>
 
-          {/* Email */}
+          {/* EMAIL */}
+
           <div className="form-group">
+
             <label htmlFor="email">
               Email
             </label>
@@ -113,10 +149,13 @@ function Register() {
               autoComplete="email"
               required
             />
+
           </div>
 
-          {/* Mot de passe */}
+          {/* MOT DE PASSE */}
+
           <div className="form-group">
+
             <label htmlFor="password">
               Mot de passe
             </label>
@@ -131,24 +170,37 @@ function Register() {
               autoComplete="new-password"
               required
             />
+
           </div>
 
-          {/* Bouton */}
+          {/* BOUTON */}
+
           <button
             type="submit"
             className="auth-button"
             disabled={loading}
           >
-            {loading ? "Création du compte..." : "S'inscrire"}
+
+            {loading
+              ? "Création du compte..."
+              : "S'inscrire"}
+
           </button>
 
         </form>
 
+        {/* CONNEXION */}
+
         <p className="auth-link">
+
           Vous avez déjà un compte ?{" "}
-          <span onClick={() => navigate("/login")}>
+
+          <span
+            onClick={() => navigate("/login")}
+          >
             Se connecter
           </span>
+
         </p>
 
       </div>
